@@ -33,7 +33,7 @@ jobs:
           mkdir ./public
           cp *.tex public/
           cd public/
-          latexmk -lualatex CV.tex
+          pdflatex CV.tex
   
       # Uploads the PDF
       - name: Upload artifact
