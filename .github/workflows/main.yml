@@ -1,28 +1,25 @@
-name: Deploy PDF
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
-
+name: Build LaTeX document
+on: [push]
 jobs:
-  build:
+  build_latex:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build
-        uses: xu-cheng/latex-action@v2
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
           latexmk_use_lualatex: true
-      - name: Copy
+      - name: Move PDF file to repository
+        run: mv main.pdf $GITHUB_WORKSPACE/main.pdf
+      - name: Commit PDF file
         run: |
-          mkdir out
-          cp ./main.pdf ./out/main.pdf
-      - uses: actions/upload-artifact@v2
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add main.pdf
+          git commit -m "Add main.pdf"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
         with:
-          name: thesis
-          path: out/main.pdf
+          github_token: ${{ secrets.GITHUB_TOKEN }}
