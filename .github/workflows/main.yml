@@ -7,12 +7,11 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v4
       - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v3
-        with:
-          root_file: main.tex
-          latexmk_use_lualatex: true
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/output
+          pdflatex -output-directory=output main.tex
       - name: Move PDF file to repository
-        run: mv main.pdf $GITHUB_WORKSPACE/main.pdf
+        run: mv $GITHUB_WORKSPACE/output/main.pdf $GITHUB_WORKSPACE/main.pdf
       - name: Commit PDF file
         run: |
           git config --local user.email "action@github.com"
