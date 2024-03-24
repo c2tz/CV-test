@@ -25,4 +25,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: thesis
-          path: out/thesis.pdf
+          path: out/main.pdf
