@@ -1,51 +1,45 @@
-name: Build and Deploy LaTeX Project
+name: latex rough_notes
 
-permissions: write-all
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+    - main
+    paths:
+    - 'docs/rough_notes.tex'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  latex-job:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
       
-      # Compiles 
-      - name: Build Latex PDF
+      - name: download paper repo
+        uses: actions/checkout@v1
+      - name: build pdf 
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: rough_notes.tex
+          working_directory: docs 
+      - name: stash pdf
         run: |
-          sudo apt update
-          sudo apt install texlive-full
-          mkdir ./public
-          cp *.tex public/
-          cd public/
-          pdflatex CV.tex
-  
-      # Uploads the PDF
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+          mv docs/rough_notes.pdf $HOME # cache the file
+      - name: checkout gh_actions_builds branch
+        uses: actions/checkout@v1
         with:
-          name: PDF
-          path: public/CV.pdf
-
-      # Publishes the PDF as a release
-      - name: Publish PDF
-        uses: softprops/action-gh-release@v1
-        # if: startsWith(github.ref, 'refs/tags/')
-        with:
-          tag_name: Current
-          files: public/CV.pdf
+          ref: gh_actions_builds
+      - name: commit pdf
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          mv $HOME/rough_notes.pdf $(pwd) # bring it back 
+          git add rough_notes.pdf
+          git commit -m "Add changes"
+      - name:  push pdf
+        uses: ad-m/github-push-action@v0.6.0
+        with: 
+          branch: gh_actions_builds 
+          force: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
