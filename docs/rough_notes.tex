@@ -26,6 +26,7 @@
 \usepackage{enumitem} % for customizing lists
 \usepackage{fontawesome5} % for using icons
 \usepackage{amsmath} % for math
+\usepackage{datetime2}
 \usepackage[
     pdftitle={Clément TAILLIEZ - CV},
     pdfauthor={Clément TAILLIEZ},
@@ -38,6 +39,7 @@
 \usepackage{lastpage} % for getting the total number of pages
 \usepackage{fontspec}
 \setmainfont{FuturaSansText-Regular.ttf}
+\usepackage{filemod}
 \usepackage{ifthen}
 
 % Some settings:
@@ -110,7 +112,7 @@
         \LenToUnit{\paperwidth+.1 cm+.1 cm+.1 cm},
         \LenToUnit{\paperheight-.5 cm}
     ){\vtop{{\null}\makebox[0pt][c]{
-        \small\color{gray}\textit{maj: 08/03/24}\hspace{\widthof{Dernière mise à jour: Mars 2024}}
+        \small\color{gray}\textit\date{\today} - \DTMcurrenttime\hspace{\widthof{Dernière mise à jour: Mars 2024}}
     }}}%
   }%
 }%
