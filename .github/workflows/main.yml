@@ -6,7 +6,7 @@ on:
     branches:
     - main
     paths:
-    - 'docs/rough_notes.tex'
+    - 'rough_notes.tex'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 jobs:
@@ -19,11 +19,10 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: rough_notes.tex
-          working_directory: docs
           latexmk_use_lualatex: true
       - name: stash pdf
         run: |
-          mv docs/rough_notes.pdf $HOME # cache the file
+          mv rough_notes.pdf $HOME # cache the file
       - name: checkout gh_actions_builds branch
         uses: actions/checkout@v1
         with:
