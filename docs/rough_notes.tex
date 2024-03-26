@@ -1,16 +1,16 @@
 % AUTHOR: Sina Atalay
 % LICENSE: https://github.com/sinaatalay/rendercv/blob/main/LICENSE
 
-\documentclass[12pt, letterpaper]{article}
+\documentclass[10pt, letterpaper]{article}
 
 % Packages:
 \usepackage{transparent}
 \usepackage[
         ignoreheadfoot, % set margins without considering header and footer
-        top=1 cm, % seperation between body and page edge from the top
-        bottom=1.5 cm, % seperation between body and page edge from the bottom
-        left=1 cm, % seperation between body and page edge from the left
-        right=1 cm, % seperation between body and page edge from the right
+        top=2 cm, % seperation between body and page edge from the top
+        bottom=2 cm, % seperation between body and page edge from the bottom
+        left=2 cm, % seperation between body and page edge from the left
+        right=2 cm, % seperation between body and page edge from the right
         footskip=1.0 cm, % seperation between body and footer
         % showframe % for debugging 
     ]{geometry} % for adjusting page geometry
@@ -26,7 +26,11 @@
 \usepackage{enumitem} % for customizing lists
 \usepackage{fontawesome5} % for using icons
 \usepackage{amsmath} % for math
-\usepackage{datetime2}
+\usepackage[en-GB,french]{datetime2}
+\DTMlangsetup[french]
+{showdayofmonth=true}
+\DTMsetdatestyle{ddmmyy}  % afficher les dates en format "jj mm aaaa"
+\DTMsetup{datesep=.}
 \usepackage[
     pdftitle={Clément TAILLIEZ - CV},
     pdfauthor={Clément TAILLIEZ},
@@ -39,7 +43,6 @@
 \usepackage{lastpage} % for getting the total number of pages
 \usepackage{fontspec}
 \setmainfont{FuturaSansText-Regular.ttf}
-\usepackage{filemod}
 \usepackage{ifthen}
 
 % Some settings:
@@ -112,7 +115,7 @@
         \LenToUnit{\paperwidth+.1 cm+.1 cm+.1 cm},
         \LenToUnit{\paperheight-.5 cm}
     ){\vtop{{\null}\makebox[0pt][c]{
-        \small\color{gray}\textit\date{\today} - \DTMcurrenttime\hspace{\widthof{Dernière mise à jour: Mars 2024}}
+        \small\color{gray}\textit\date{\today} - \DTMcurrenttime{}\hspace{\widthof{Dernière mise à jour: Mars 2024}}
     }}}%
   }%
 }%
@@ -207,7 +210,7 @@
 	\vspace{0.10 cm}
 	
 	\begin{highlights}
-	\item Intervention IMAC et MCO à travers le 64 et 65 pour BPCE-IT, PMU, BNP, HSBC, RCBT, Sephora, Macif, Ortec, U GIE IRIS, CAPG. Masterisation, inventaire, déploiement, logistique, retail (TPV, TPE...), imprimante (Brother, HP, Lexmark)
+	\item Intervention IMAC et MCO à travers le 64 et 65 pour BPCE-IT, PMU, BNP, HSBC, RCBT, Sephora, Macif, Ortec, U GIE IRIS, CAPG. Masterisation, inventaire, déploiement, logistique, retail (TPV, TPE...), imprimante (Brother, HP, Lexmark) 
 	\end{highlights}
 	  &   
 	Jan. 2022
