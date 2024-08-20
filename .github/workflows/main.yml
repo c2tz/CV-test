@@ -12,7 +12,7 @@ jobs:
       uses: xu-cheng/latex-action@v2
       with:
           # The root LaTeX file to be compiled
-          root_file: rough_notes.tex
+          root_file: docs/rough_notes.tex
 
           # Interpret the root_file input as bash glob pattern
           # glob_root_file: # optional
