@@ -30,7 +30,7 @@ jobs:
           # extra_system_packages: # optional
 
           # Install extra .ttf/.otf fonts.
-          extra_fonts: docs/GoogleSans/GoogleSans-Medium.ttf
+          extra_fonts: docs/GoogleSans/GoogleSans-Regular.ttf
 
           # Arbitrary bash codes to be executed before compiling LaTeX documents
           pre_compile: tlmgr update --self && tlmgr update --all
