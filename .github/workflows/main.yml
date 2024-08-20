@@ -1,46 +1,61 @@
-name: latex rough_notes
-
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches:
-    - main
-    paths:
-    - 'docs/rough_notes.tex'
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
+name: Github Actions CI to build pdf from tex source.
+on: push
 jobs:
-  latex-job:
+  build:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
     steps:
-      
-      - name: download paper repo
-        uses: actions/checkout@v1
-      - name: build pdf 
-        uses: xu-cheng/latex-action@v2
-        with:
+    - name: Set up Git repository
+      uses: actions/checkout@v2
+
+    - name: Compile LaTeX document
+      uses: xu-cheng/latex-action@v2
+      with:
+          # The root LaTeX file to be compiled
           root_file: rough_notes.tex
-          working_directory: docs
+
+          # Interpret the root_file input as bash glob pattern
+          # glob_root_file: # optional
+
+          # The working directory for this action
+          # working_directory: # optional
+
+          # The LaTeX engine to be invoked
+          # compiler: # optional, default is latexmk
+
+          # Extra arguments to be passed to the LaTeX engine
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+
+          # Install extra packages by apk
+          # extra_system_packages: # optional
+
+          # Install extra .ttf/.otf fonts.
+          # extra_fonts: ./fonts/*.ttf
+
+          # Arbitrary bash codes to be executed before compiling LaTeX documents
+          pre_compile: tlmgr update --self && tlmgr update --all
+
+          # Arbitrary bash codes to be executed after compiling LaTeX documents
+          post_compile: latexmk -c
+
+          # Instruct latexmk to enable --shell-escape
+          # latexmk_shell_escape: # optional
+
+          # Instruct latexmk to use LuaLaTeX
           latexmk_use_lualatex: true
-      - name: stash pdf
-        run: |
-          mv docs/rough_notes.pdf $HOME # cache the file
-      - name: checkout gh_actions_builds branch
-        uses: actions/checkout@v1
-        with:
-          ref: gh_actions_builds
-      - name: commit pdf
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          mv $HOME/rough_notes.pdf $(pwd) # bring it back 
-          git add rough_notes.pdf
-          git commit -m "Add changes"
-      - name:  push pdf
-        uses: ad-m/github-push-action@v0.6.0
-        with: 
-          branch: gh_actions_builds 
-          force: false
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Instruct latexmk to use XeLaTeX
+          # latexmk_use_xelatex: true 
+
+    - name: Check pdf file
+      run: |
+        file report.pdf | grep -q ' PDF '
+
+    - name: Upload file to repository
+      run: |
+        git config --global user.name "c2tz"
+        git config --global user.email "95414249+c2tz@users.noreply.github.com"
+        git add report.pdf
+        git commit -m "commit message"
+        git push
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
