@@ -16,7 +16,7 @@ jobs:
       - name: Copy
         run: |
           mkdir out
-          cp ./CV_TAILLIEZ_Clément.pdf ./out/CV_TAILLIEZ_Clément.pdf
+          cp ./CV_TAILLIEZ_Clement.pdf ./out/CV_TAILLIEZ_Clement.pdf
 
       - name: Fetch and checkout main branch
         run: |
@@ -26,8 +26,8 @@ jobs:
       - name: Upload CV Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CV_TAILLIEZ_Clément.pdf
-          path: ./out/CV_TAILLIEZ_Clément.pdf
+          name: CV_TAILLIEZ_Clement.pdf
+          path: ./out/CV_TAILLIEZ_Clement.pdf
           retention-days: 9
 
       - name: Set Environment Variables
@@ -44,7 +44,7 @@ jobs:
           sudo sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/; s/name="height" value="10KP"/name="height" value="128Kp"/; s/name="width" value="10KP"/name="width" value="128Kp"/; s/name="map" value="512MiB"/name="map" value="4GiB"/; s/name="memory" value="256MiB"/name="memory" value="2GiB"/' /etc/ImageMagick-6/policy.xml
       
       - name: Convert PDF to PNG
-        run: convert -density 900 -alpha off ./out/CV_TAILLIEZ_Clément.pdf -resize 15% -quality 50 CV_TAILLIEZ_Clément.png
+        run: convert -density 900 -alpha off ./out/CV_TAILLIEZ_Clement.pdf -resize 15% -quality 50 CV_TAILLIEZ_Clement.png
 
       - name: Commit PNG Files
         run: |
@@ -61,13 +61,13 @@ jobs:
       
       - name: Create new README.md
         run: |  
-          echo "__CV TAILLIEZ Clément__" > README.md
+          echo "__CV TAILLIEZ Clement__" > README.md
           echo "" >> README.md
           echo "Note : remember to clear your cache if the release and preview dates don't match, as this means that the image hasn't been updated." > README.md
           echo "" >> README.md
           echo "| Preview - click on it to download |" >> README.md
           echo "| ---------- |" >> README.md
-          echo "| <a href="https://github.com/c2tz/CV-test/releases/download/${{ env.NAME }}/CV_TAILLIEZ_Clément.pdf"><img src="https://raw.githubusercontent.com/c2tz/CV-test/main/CV_TAILLIEZ_Clément.png" alt="CV Preview"></a> |" >> README.md
+          echo "| <a href="https://github.com/c2tz/CV-test/releases/download/${{ env.NAME }}/CV_TAILLIEZ_Clement.pdf"><img src="https://raw.githubusercontent.com/c2tz/CV-test/main/CV_TAILLIEZ_Clement.png" alt="CV Preview"></a> |" >> README.md
       
       - name: Commit README.md
         run: |
@@ -87,11 +87,11 @@ jobs:
         with:
           name: '${{ env.NAME }}'
           tag_name: '${{ env.TAG }}'
-          files: ./out/CV_TAILLIEZ_Clément.pdf
+          files: ./out/CV_TAILLIEZ_Clement.pdf
           body: |
             CV updated on **${{ env.CHANGELOG }}**.
             ---
-            You can download the latest version by [clicking here](https://github.com/c2tz/CV-test/releases/download/${{ env.NAME }}/CV_TAILLIEZ_Clément.pdf).
+            You can download the latest version by [clicking here](https://github.com/c2tz/CV-test/releases/download/${{ env.NAME }}/CV_TAILLIEZ_Clement.pdf).
             
             ### Notes : 
             The build date indicated on the CV and the release date may be slightly different because there is a delay between the time I generate my CV (locally) and the time I publish it on GitHub.
