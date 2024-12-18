@@ -16,7 +16,7 @@ jobs:
       - name: Build
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: ./docs/rouggh_notes.tex
+          root_file: ./docs/cv.tex
           latexmk_use_lualatex: true
       - name: Copy
         run: |

@@ -22,6 +22,7 @@
 \usepackage{lastpage}
 \usepackage{fontspec}
 \usepackage{ifthen}
+\usepackage[sfdefault]{roboto}
 %============= Additional Settings ============== OK just reorder
 \definecolor{primaryColor}{HTML}{0D47A1} %blue900
 \definecolor{secondaryColor}{HTML}{9E9E9E} %grey500
@@ -56,41 +57,13 @@
 \renewenvironment{tabularx}{\bgroup\centering\originalTabularx}{\originalEndTabularx\par\egroup}
 \def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1\topsep=0pt\itemsep=0pt\parsep=0pt\parskip=0pt\labelwidth=0pt\itemindent=0pt\labelsep=0pt}\item[]}
 \let\endchangemargin=\endlist
-% custom font -----------------------------------
-\setsansfont{GoogleSans}[
-    Path=./GoogleSans/,
-    Extension = .ttf,
-    UprightFont=*-Regular,
-    BoldFont=*-Bold,
-    ItalicFont=*-Italic,
-    BoldItalicFont=*-BoldItalic
-    ]
-%\sffamily
-\setmainfont{GoogleSansText}[
-    Path=./GoogleSansText/,
-    Extension = .ttf,
-    UprightFont=*-Regular,
-    BoldFont=*-Bold,
-    ItalicFont=*-Italic,
-    BoldItalicFont=*-BoldItalic
-    ]
-%\rmfamily
-\setmonofont{GoogleSansDisplay}[
-    Path=./GoogleSansDisplay/,
-    Extension = .ttf,
-    UprightFont=*-Regular,
-    BoldFont=*-Bold,
-    ItalicFont=*-Italic,
-    BoldItalicFont=*-BoldItalic
-    ]
-%\ttfamily
 %==================== Start ===================== Actualy in progress
 \begin{document}
 \placelastupdatedtext
 % header ----------------------------------------
 \begin{header}
 	\fontsize{26 pt}{26 pt}
-	\ttfamily\textbf{Clément Tailliez}
+	\textbf{Clément Tailliez}
 % space -----------------------------------------
 
 	\vspace{0.3 cm}
@@ -102,8 +75,7 @@
 	\mbox{\hrefWithoutArrow{https://maps.app.goo.gl/z56isr7ngoKffSCT9}{{\small\faMapMarker}\hspace*{0.13cm}\sffamily{Artiguelouve}}}
 	\hspace{0.5 cm}
 	\mbox{{{\small\faCar}\hspace*{0.13cm}\sffamily{Permis B}}}
- 	\hspace{0.5 cm}
-	\mbox{{{\small\faBirthdayCake}\hspace*{0.13cm}\sffamily{22 ans}}}
+ 	\hspace{0.5 cm}	\mbox{{{\small\faBirthdayCake}\hspace*{0.13cm}\sffamily{22 ans}}}
 \end{header}
 % diplome ----------------------------------------
 \section{Diplômes - Formations}        
