@@ -16,7 +16,7 @@ jobs:
       - name: Copy
         run: |
           mkdir out
-          cp ./main.pdf ./out/main.pdf
+          cp ./CV_TAILLIEZ_Clément.pdf ./out/CV_TAILLIEZ_Clément.pdf
 
       - name: Fetch and checkout main branch
         run: |
@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CV.pdf
-          path: ./out/main.pdf
+          path: ./out/CV_TAILLIEZ_Clément.pdf
           retention-days: 9
 
       - name: Set Environment Variables
@@ -44,7 +44,7 @@ jobs:
           sudo sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/; s/name="height" value="10KP"/name="height" value="128Kp"/; s/name="width" value="10KP"/name="width" value="128Kp"/; s/name="map" value="512MiB"/name="map" value="4GiB"/; s/name="memory" value="256MiB"/name="memory" value="2GiB"/' /etc/ImageMagick-6/policy.xml
       
       - name: Convert PDF to PNG
-        run: convert -density 900 -alpha off ./out/main.pdf -resize 15% -quality 50 cv_preview_%d.png
+        run: convert -density 900 -alpha off ./out/CV_TAILLIEZ_Clément.pdf -resize 15% -quality 50 cv_preview_%d.png
 
       - name: Commit PNG Files
         run: |
@@ -67,7 +67,7 @@ jobs:
           echo "" >> README.md
           echo "| Preview - click on it to download |" >> README.md
           echo "| ---------- |" >> README.md
-          echo "| <a href="https://github.com/c2tz/cv-test2/releases/download/${{ env.NAME }}/main.pdf"><img src="https://raw.githubusercontent.com/c2tz/cv-test2/main/cv_preview_0.png" alt="CV Preview"></a> |" >> README.md
+          echo "| <a href="https://github.com/c2tz/CV-test/releases/download/${{ env.NAME }}/CV_TAILLIEZ_Clément.pdf"><img src="https://raw.githubusercontent.com/c2tz/CV-test/main/CV_TAILLIEZ_Clément.png" alt="CV Preview"></a> |" >> README.md
       
       - name: Commit README.md
         run: |
@@ -87,11 +87,11 @@ jobs:
         with:
           name: '${{ env.NAME }}'
           tag_name: '${{ env.TAG }}'
-          files: ./out/main.pdf
+          files: ./out/CV_TAILLIEZ_Clément.pdf
           body: |
             CV updated on **${{ env.CHANGELOG }}**.
             ---
-            You can download the latest version by [clicking here](https://github.com/c2tz/cv/releases/download/${{ env.NAME }}/Google_CV.pdf).
+            You can download the latest version by [clicking here](https://github.com/c2tz/CV-test/releases/download/${{ env.NAME }}/CV_TAILLIEZ_Clément.pdf).
             
             ### Notes : 
             The build date indicated on the CV and the release date may be slightly different because there is a delay between the time I generate my CV (locally) and the time I publish it on GitHub.
