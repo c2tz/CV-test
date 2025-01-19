@@ -1,5 +1,5 @@
 \documentclass[10pt, fr-FR]{article}
-%=================== Packages =================== OK just reorder
+%=================== Packages ===================
 \usepackage{amsmath}
 \usepackage[french]{babel}
 \usepackage[autolanguage]{numprint}
@@ -7,7 +7,7 @@
 \usepackage{hyphenat}
 \usepackage{tabularx}
 \usepackage{array}
-\usepackage[ignoreheadfoot,top=1 cm,bottom=2 cm,left=2 cm,right=2 cm,footskip=1.0 cm,]{geometry}
+\usepackage[ignoreheadfoot,top=1 cm,bottom=2 cm,left=2 cm,right=2 cm,footskip=1.0 cm]{geometry}
 \usepackage{graphicx}
 \usepackage[explicit]{titlesec}
 \usepackage[dvipsnames]{xcolor}
@@ -16,6 +16,7 @@
 \usepackage{datetime2}
 \usepackage{pifont}
 \usepackage[pdftitle={Clément TAILLIEZ - CV},pdfauthor={Clément TAILLIEZ},colorlinks=true,urlcolor=primaryColor]{hyperref}
+\usepackage{fancyhdr} % Ajout du package fancyhdr
 \usepackage[pscoord]{eso-pic}
 \usepackage{calc}
 \usepackage{bookmark}
@@ -23,24 +24,31 @@
 \usepackage{fontspec}
 \usepackage{ifthen}
 \usepackage[sfdefault]{roboto}
-%============= Additional Settings ============== OK just reorder
+
+%============= Additional Settings ==============
 \definecolor{primaryColor}{HTML}{0D47A1} %blue900
 \definecolor{secondaryColor}{HTML}{9E9E9E} %grey500
 \DTMsetup{datesep=/,hourminsep=h,minsecsep=:}
 \frenchbsetup{StandardLists=true}
 \DTMsetstyle{default}
 \DTMsetdatestyle{ddmmyyyy}
-\hyphenation{MicroTik Roundcube}
-\pagestyle{empty}
+\hyphenation{MicroTik Roundcube Radius}
 \setcounter{secnumdepth}{0}
 \setlength{\parindent}{0pt}
 \setlength{\topskip}{0pt}
-\makeatletter
-\let\ps@customFooterStyle\ps@plain
-\patchcmd{\ps@customFooterStyle}{\thepage}{\color{secondaryColor}\textit{\small \sffamily{Page \thepage{} sur \pageref*{LastPage}}}}{}{}
-\makeatother
-\pagestyle{customFooterStyle}
-\AddToHook{shipout/background}{\put (0in,-\paperheight){\transparent{0.5}\includegraphics[width=\paperwidth,height=\paperheight]{bg.png}}}
+
+% Configuration du style de pied de page
+\pagestyle{fancy}
+\fancyhf{} % Effacer les en-têtes et pieds de page par défaut
+\fancyhead{} % Effacer l'en-tête
+\fancyfoot[C]{% Centrer le contenu du pied de page
+    \color{secondaryColor}\textit{\small{maj : }}%
+    \textit{\small\textit\date{\today} - \DTMcurrenttime{}} \\ % Date et heure
+    %\textit{\small p. \thepage{} sur \pageref*{LastPage}} % Numéro de page
+}
+\renewcommand{\headrulewidth}{0pt} % Supprimer la ligne de l'en-tête
+\renewcommand{\footrulewidth}{0pt} % Supprimer la ligne du pied de page
+%\AddToHook{shipout/background}{\put (0in,-\paperheight){\transparent{0.5}\includegraphics[width=\paperwidth,height=\paperheight]{bg.png}}}
 \titleformat{\section}{\Large\color{primaryColor}}{}{}{\textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}}[]
 \titlespacing{\section}{0pt}{0.3 cm}{0.2 cm}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
@@ -49,7 +57,6 @@
 \setlength\tabcolsep{-1.5pt}
 \newenvironment{highlights}{\begin{itemize}[topsep=0pt,parsep=0.10 cm,partopsep=0pt,itemsep=0pt,after=\vspace{-1\baselineskip},leftmargin=0.4 cm + 3pt]}{\end{itemize}}
 \newenvironment{header}{\setlength{\topsep}{0pt}\par\kern\topsep\centering\color{primaryColor}\linespread{1.5}}{\par\kern\topsep}
-\newcommand{\placelastupdatedtext}{\AddToShipoutPictureFG*{\put(\LenToUnit{\paperwidth-2.065 cm-0.2 cm+0.05cm},\LenToUnit{\paperheight-0.5 cm}){\vtop{{\null}\makebox[0pt][c]{\small\color{secondaryColor}\textit\date{\today} - \DTMcurrenttime{}\hspace{\widthof{\textit\date{\today} - \DTMcurrenttime{}}}}}}}}
 \let\hrefWithoutArrow\href
 \renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\mbox{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}}
 \let\originalTabularx\tabularx
@@ -59,158 +66,147 @@
 \let\endchangemargin=\endlist
 %==================== Start ===================== Actualy in progress
 \begin{document}
-\placelastupdatedtext
 % header ----------------------------------------
 \begin{header}
 	\fontsize{26 pt}{26 pt}
 	\textbf{Clément Tailliez}
-% space -----------------------------------------
+	% space -----------------------------------------
 
 	\vspace{0.3 cm}
 	\normalsize
-	\mbox{\hrefWithoutArrow{tel:+33643830403}{{\footnotesize\faPhone*}\hspace*{0.13cm}\sffamily{+33 6 43 83 04 03}}}
+	\mbox{\hrefWithoutArrow{tel:+33643830403}{{\footnotesize\faPhone*}\hspace*{0.13cm}{+33 6 43 83 04 03}}}
 	\hspace*{0.5 cm}
-	\mbox{\hrefWithoutArrow{mailto:c2tz@cta.li}{{\small\faEnvelope[regular]}\hspace*{0.13cm}\sffamily{c2tz@cta.li}}}
+	\mbox{\hrefWithoutArrow{mailto:c2tz@cta.li}{{\small\faEnvelope[regular]}\hspace*{0.13cm}{c2tz@cta.li}}}
 	\hspace*{0.5 cm}
-	\mbox{\hrefWithoutArrow{https://maps.app.goo.gl/z56isr7ngoKffSCT9}{{\small\faMapMarker}\hspace*{0.13cm}\sffamily{Artiguelouve}}}
+	\mbox{\hrefWithoutArrow{https://maps.app.goo.gl/z56isr7ngoKffSCT9}{{\small\faMapMarker}\hspace*{0.13cm}{Artiguelouve (64)}}}
 	\hspace{0.5 cm}
-	\mbox{{{\small\faCar}\hspace*{0.13cm}\sffamily{Permis B}}}
- 	\hspace{0.5 cm}	\mbox{{{\small\faBirthdayCake}\hspace*{0.13cm}\sffamily{23 ans}}}
+	\mbox{{{\small\faCar}\hspace*{0.13cm}{Permis B}}}
 \end{header}
 % diplome ----------------------------------------
-\section{Diplômes - Formations}        
+\section{Diplômes - Formations}
 \begin{tabularx}{
-	\textwidth-0.4 cm-0.13cm
+		\textwidth-0.4 cm-0.13cm
 	}{
-	K{0.2 cm}
-	R{4.1 cm}
+		K{0.2 cm}
+		R{4.1 cm}
 	}
-\textbf{BTS SIO}, \textbf{\textit{R}}éseau \textbf{\textit{I}}nfrastucture et \textbf{\textit{S}}ystème \textbf{\textit{C}}ommuniquant 
-	
-	\hspace{0 cm} 
+	\textbf{BTS SIO}, \textbf{\textit{R}}éseau \textbf{\textit{I}}nfrastucture et \textbf{\textit{S}}ystème \textbf{\textit{C}}ommuniquant
+
+	\hspace{0 cm}
 	\textbf{Cours :}
 	\vspace{0.10 cm}
-	
+
 	\begin{highlights}
-	    \item Réseau : LAMP, HAProxy, PFSense, GLPI (OCS, FI), AirWatch, Zentyal, MicroTik, Radius, NextCloud, Proxmox, IPTable, Asterisk
-	    \item Développement : SQL, Python, PowerShell, Bash, XML
+		\item Réseau : LAMP, HAProxy, PFSense, GLPI (OCS, FI), AirWatch, Zentyal, MicroTik, Radius, NextCloud, Proxmox, IPTable, Asterisk
+		\item Développement : SQL, Python, PowerShell, Bash, XML
 	\end{highlights}
-	  &
+	 &
 	Sept. 2019 - Juil. 2021
 	Lycée Saint-John-Perse
-	
-        Pau
+	Pau (64)
 \end{tabularx}
-\vspace{0.20cm} 
+\vspace{0.20cm}
 
 \begin{tabularx}{
-	\textwidth-0.4 cm-0.13cm
+		\textwidth-0.4 cm-0.13cm
 	}{
-	K{0.2 cm}
-	R{4.1 cm}
+		K{0.2 cm}
+		R{4.1 cm}
 	}
 	\textbf{BAC PRO SN}, \textbf{\textit{S}}olutions d'\textbf{\textit{I}}nfrastructures, \textbf{\textit{S}}ystèmes et \textbf{\textit{R}}éseaux
-	
-	\hspace{0 cm} 
+
+	\hspace{0 cm}
 	\textbf{Cours :}
 	\vspace{0.10 cm}
-	
+
 	\begin{highlights}
-	\item Réseau : Switch Cisco, Windows Server (DHCP, DNS, GPO, IPv4-6, SSH), Debian, oBox
-	\item Développement : C++, Batch
+		\item Réseau : Switch Cisco, Nortel, HP, Windows Server, Debian, bases réseaux (IPv4-6, GW, masque, DHCP, DNS, SSH, VPN, TLD, routes...)
+		\item Développement : Batch, C++
 	\end{highlights}
-	  &   
+	 &
 	Sept. 2016 - Juin 2019
 	Lycée Guynemer
-	            
-	Oloron-Ste-Marie
+	Oloron-Ste-Marie (64)
 \end{tabularx}
 
 \section{Expériences Professionnelles}
 
 \begin{tabularx}{
-	\textwidth-0.4 cm-0.13cm
+		\textwidth-0.4 cm-0.13cm
 	}{
-	K{0.2 cm}
-	R{4.1 cm}
+		K{0.2 cm}
+		R{4.1 cm}
 	}
 	\textbf{Tibco Services}, Technicien Retail n+2 itinérant
-	
 	\vspace{0.10 cm}
-	
 	\begin{highlights}
-	\item Intervention IMAC et MCO à travers le 64 et 65 pour BPCE-IT, PMU, BNP, CCF (HSBC), RCBT, Sephora, Macif, Ortec, U GIE IRIS, CAPG, Yves Rocher, InitSys, Hub One... Masterisation, inventaire, déploiement, logistique, retail (TPV, TPE, douchette, imp ticket), imprimante (Brother, HP, Lexmark), assistance utilisateurs, remplacement matériel réseau et télécom. 
+		\item Interventions IMAC et MCO : 64, 65 pour BPCE-IT, PMU, BNP, CCF, RCBT, Sephora, Macif, Ortec, U GIE IRIS, CAPG, Yves Rocher, InitSys, Hub One, Euralis, Nickel... Masterisation postes, inventaire, déploiement, logistique, retail (TPV, TPE, douchette, imp ticket), imprimante (Brother, HP, Lexmark), assistance utilisateurs, remplacement équipements réseaux et télécoms divers.
 	\end{highlights}
-	  &   
-	Jan. 2022
-	            
-	CDI - 2,5 ans     
-	Pau
+	 &
+	Jan. 2022 - présent
+
+    CDI
+
+    Pau
 \end{tabularx}
 
 \vspace{0.2 cm}
+
 \begin{tabularx}{
-	\textwidth-0.4 cm-0.13cm
+		\textwidth-0.4 cm-0.13cm
 	}{
-	K{0.2 cm}
-	R{4.1 cm}
+		K{0.2 cm}
+		R{4.1 cm}
 	}
 	\textbf{DEFI Informatique}, Support Technique n+2 et supervision
-	
 	\vspace{0.10 cm}
-	
 	\begin{highlights}
-	\item Installation et dépannage d'un PGI (Gescof), VPS OVH, Mail (MX, Roundcube), carbonite, Zabbix, traitement tickets (logiciel interne), création scripts et documentations, debug BDD (MS Access, SQL Server ) + gestion sur site
-	Switch TPLink (QOS, VLAN), serveur WSUS. \end{highlights}
-	  &   
+		\item Installation et dépannage d'un PGI (Gescof), VPS OVH, Mail (MX, Roundcube), carbonite, Zabbix, traitement tickets (logiciel interne), création scripts et documentations, debug BDD (MS Access, SQL Server ) + gestion sur site
+		Switch TPLink (QOS, VLAN), serveur WSUS. \end{highlights}
+	 &
 	Juil. 2021 - Jan. 2022
-	
+
 	CDD - 6 mois
-	
-	Abos
+
+	Abos (64)
 \end{tabularx}
+
 \vspace{0.2 cm}
+
 \begin{tabularx}{
-	\textwidth-0.4 cm-0.13cm
+		\textwidth-0.4 cm-0.13cm
 	}{
-	K{0.2 cm}
-	R{4.1 cm}
+		K{0.2 cm}
+		R{4.1 cm}
 	}
 	\textbf{2 Stages}, en BTS \textbf{\textit{S}}ervice \textbf{\textit{I}}nformatique aux \textbf{\textit{O}}rganisation
-	
 	\vspace{0.10 cm}
-	
 	\begin{highlights}
-	\vspace{0.10 cm}
-
-	\item Du 22/02/21 au 09/04/21 : Dépannage utilisateurs niveau 1, masterisation laptop, documentations, création de procedures et de scripts, interventions en agence, enrolement (airwatch).
-
- 	\item Du 25/05/20 au 26/06/20 : Traitement d'export avec Excel, création de script, deploiement de poste, depannage salle de reunion, conference (pieuvre Jabra, live YouTube, projecteur)
+		\item Du 22/02/21 au 09/04/21 : Dépannage utilisateurs n+1, masterisation postes, créations documentations, scripts PowerShell, dépannage agence (PLV, hardware), enrôlement (airwatch).
+		\item Du 25/05/20 au 26/06/20 : Traitement d'export avec Excel, création de script batch, deploiement de poste (marimba), depannage salle de reunion, conférence (Projecteur, pieuvre Jabra...).
 	\end{highlights}
-	  &   
+	 &
 	4 et 7 semaines
-	
-	Serres-Castet
+
+	Serres-Castet (64)
 \end{tabularx}
+
 \vspace{0.2 cm}
+
 \begin{tabularx}{
-	\textwidth-0.4 cm-0.13cm
+		\textwidth-0.4 cm-0.13cm
 	}{
-	K{0.2 cm}
-	R{4.1 cm}
+		K{0.2 cm}
+		R{4.1 cm}
 	}
-	\textbf{6 Stages}, en BAC PRO \textbf{\textit{S}}ystème \textbf{\textit{N}}umérique 
-	
+	\textbf{6 Stages}, en BAC PRO \textbf{\textit{S}}ystème \textbf{\textit{N}}umérique
 	\vspace{0.10 cm}
-	
 	\begin{highlights}
-	\vspace{0.1cm}
-	\item Scopelec, VBI, Département 64, Disi (DGFIP), Ville de Pau (Service feu tricolore) et Emmaüs : Aide et dépannage varié, principalement Hardware.
+		\item Scopelec, VBI, Département 64, Disi (DGFIP), Ville de Pau (Service feu tricolore) et Emmaüs : Aide et dépannage varié, principalement Hardware.
 	\end{highlights}
-	  &
+	 &
 	25 semaines
-        
-        \textbf{\approx} Pau
+    \textbf{\approx} Pau
 \end{tabularx}
 
 \section{Compétences Acquises}
@@ -219,14 +215,14 @@
 \advance\csname @rightskip\endcsname 0.2 cm
 \advance\rightskip 0.2 cm
 
-\textbf{Languages:} CSS, JavaScript, Batch, \LaTeX, Docker, Assembleur, Sieve \par\endgroup
+\textbf{Languages:} \LaTeX, Assembleur, CSS, JavaScript, Anglais B1 (intermediate) \par\endgroup
 
 \vspace{0.2 cm}
 \begingroup\leftskip=0.2 cm
 \advance\csname @rightskip\endcsname 0.2 cm
 \advance\rightskip 0.2 cm
 
-\textbf{Software:} VSCode, Git, O365, G Workspace, Eclipse, InkScape, IDA, GrapheneOS \par\endgroup
+\textbf{Software:} Office 365, G Workspace, IDA Pro, Git, VScode, Inkscape, DSM, GrapheneOS, Docker \par\endgroup
 
 \section{Centres d'intérêt}
 
@@ -234,5 +230,5 @@
 \advance\csname @rightskip\endcsname 0.2 cm
 \advance\rightskip 0.2 cm
 
-Informatique (réseau, projets IT divers, developpement), cyclisme, anime, jeux videos, livre, musique. \par\endgroup
+Réseau \& développement, VTT, gaming, musique. \par\endgroup
 \end{document}
