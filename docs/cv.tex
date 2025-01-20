@@ -42,9 +42,10 @@
 \fancyhf{} % Effacer les en-têtes et pieds de page par défaut
 \fancyhead{} % Effacer l'en-tête
 \fancyfoot[C]{% Centrer le contenu du pied de page
-    \color{secondaryColor}\textit{\small{maj : }}%
-    \textit{\small\textit\date{\today} - \DTMcurrenttime{}} \\ % Date et heure
-    %\textit{\small p. \thepage{} sur \pageref*{LastPage}} % Numéro de page
+    \color{secondaryColor} % Date et heure
+    \textit{\small Clément Tailliez - p.\thepage{} sur \pageref*{LastPage}} \\% Numéro de page
+    \textit{\small{maj : le }}%
+    \textit{\small\textit\date{\today} à \DTMcurrenttime{}} \\
 }
 \renewcommand{\headrulewidth}{0pt} % Supprimer la ligne de l'en-tête
 \renewcommand{\footrulewidth}{0pt} % Supprimer la ligne du pied de page
@@ -166,7 +167,7 @@
 	 &
 	Juil. 2021 - Jan. 2022
 
-	CDD - 6 mois
+	CDD
 
 	Abos (64)
 \end{tabularx}
