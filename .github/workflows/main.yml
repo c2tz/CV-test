@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: add permissions
-        run: "git config --global --add safe.directory /__w/c2tz/cv-test"
+        run: "git config --global --add safe.directory /__w/cv-test/cv-test"
       - name: set git variables
         run: |
             git config --global user.email "95414249+c2tz@users.noreply.github.com"
