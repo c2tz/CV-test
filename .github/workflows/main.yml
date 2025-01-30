@@ -1,102 +1,38 @@
-name: Deploy PDF
-
+name: Deploy PDF (test)
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  #push:
+  #  branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container: texlive/texlive:latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Copy
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: add permissions
+        run: "git config --global --add safe.directory /__w/cv-test/CV_TAILLIEZ_Clement"
+      - name: set git variables
         run: |
-          mkdir out
-          cp ./CV_TAILLIEZ_Clement.pdf ./out/CV_TAILLIEZ_Clement.pdf
-
-      - name: Fetch and checkout main branch
+            git config --global user.email "95414249+c2tz@users.noreply.github.com"
+            git config --global user.name "c2tz"
+      - name: cleanup old pdfs
         run: |
-          git fetch origin main
-          git checkout main
+          git rm --ignore-unmatch *.pdf
+          git commit --allow-empty -m 'removing old pdfs, github action'
           git push
-      - name: Upload CV Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: CV_TAILLIEZ_Clement.pdf
-          path: ./out/CV_TAILLIEZ_Clement.pdf
-          retention-days: 9
-
-      - name: Set Environment Variables
+      - name: Run latexmk
+        run: "latexmk --lualatex main.tex"
+      - name: Store build timestamp
+        run: echo "BUILD_TIME=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
+      - name: change file name
+        run: "mv main.pdf main$BUILD_TIME.pdf"
+      - name: adding new pdfs
         run: |
-          echo "CHANGELOG=$(TZ=":Europe/Paris" date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
-          echo "NAME=$(TZ=":Europe/Paris" date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
-          echo "TAG=$(TZ=":Europe/Paris" date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
-      
-      - name: Update Packages
-        run: sudo apt-get update --fix-missing && sudo apt install ghostscript
-
-      - name: Modify ImageMagick Policy
-        run: |
-          sudo sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/; s/name="height" value="10KP"/name="height" value="128Kp"/; s/name="width" value="10KP"/name="width" value="128Kp"/; s/name="map" value="512MiB"/name="map" value="4GiB"/; s/name="memory" value="256MiB"/name="memory" value="2GiB"/' /etc/ImageMagick-6/policy.xml
-      
-      - name: Convert PDF to PNG
-        run: convert -density 900 -alpha off ./out/CV_TAILLIEZ_Clement.pdf -resize 15% -quality 50 CV_TAILLIEZ_Clement.png
-
-      - name: Commit PNG Files
-        run: |
-          git config --local user.email "action[bot]@github.com"
-          git config --local user.name "github-actions[bot]"
-          git add *.png
-          git commit -m "docs(bot): updated preview images"
-      
-      - name: Remove existing README.md
-        run: |
-          git rm README.md
-          git commit -m "docs(bot): remove existing README file"
+          git add main$BUILD_TIME.pdf
+          git commit -m 'adding new pdf, github action'
           git push
-      
-      - name: Create new README.md
-        run: |  
-          echo "__CV TAILLIEZ Clement__" > README.md
-          echo "" >> README.md
-          echo "Note : remember to clear your cache if the release and preview dates don't match, as this means that the image hasn't been updated." > README.md
-          echo "" >> README.md
-          echo "| Preview - click on it to download |" >> README.md
-          echo "| ---------- |" >> README.md
-          echo "| <a href="https://github.com/c2tz/CV-test/releases/download/${{ env.NAME }}/CV_TAILLIEZ_Clement.pdf"><img src="https://raw.githubusercontent.com/c2tz/CV-test/main/CV_TAILLIEZ_Clement.png" alt="CV Preview"></a> |" >> README.md
-      
-      - name: Commit README.md
-        run: |
-          git config --local user.email "action[bot]@github.com"
-          git config --local user.name "github-actions[bot]"
-          git add README.md
-          git commit -m "docs(bot): updated README file with new content"
-      - name: Push Changes to GitHub
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-          force: true
-          
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: '${{ env.NAME }}'
-          tag_name: '${{ env.TAG }}'
-          files: ./out/CV_TAILLIEZ_Clement.pdf
-          body: |
-            CV updated on **${{ env.CHANGELOG }}**.
-            ---
-            You can download the latest version by [clicking here](https://github.com/c2tz/CV-test/releases/download/${{ env.NAME }}/CV_TAILLIEZ_Clement.pdf).
-            
-            ### Notes : 
-            The build date indicated on the CV and the release date may be slightly different because there is a delay between the time I generate my CV (locally) and the time I publish it on GitHub.
-            
-            Version and tag names are generated automatically based on the commit date and time, there aren't used for version management purposes.
-            
-            I don't use the changelog here to keep you informed of any changes I make. To find out more about this, see the [commit history](https://github.com/c2tz/cv/commits/main/?author=c2tz).
-            
