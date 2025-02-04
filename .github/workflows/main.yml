@@ -1,14 +1,11 @@
-name: Compile and Deploy CV
+name: Compile and Deploy PDF
 
 on:
   push:
     branches: [develop]
+# push:
+#   branches: [ "main" ]
   workflow_dispatch:
-
-env:
-  LATEX_MAIN: "cv.tex"          # Nom de votre fichier LaTeX principal
-  CV_NAME: "MyProfessionalCV"   # Nom de base souhaité pour le PDF
-  TIMEZONE: "Europe/Paris"      # Fuseau horaire
 
 permissions:
   contents: write
@@ -16,76 +13,125 @@ permissions:
 jobs:
   compile:
     runs-on: ubuntu-latest
-    container:
-      image: texlive/texlive:latest
-      options: --env TZ=${{ env.TIMEZONE }}
+    container: texlive/texlive:latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set container timezone
-        run: |
-          ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
-          echo $TZ > /etc/timezone
+      - name: Add workspace permissions
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Compile LaTeX
+      - name: Set Git identity
         run: |
-          latexmk -pdf -lualatex="lualatex -interaction=nonstopmode" $LATEX_MAIN
+          git config --global user.email "95414249+c2tz@users.noreply.github.com"
+          git config --global user.name "c2tz"
 
-      - name: Generate UTC timestamp
+      - name: Clean old PDFs
+        run: |
+          git rm --ignore-unmatch *.pdf
+          git commit -m 'Remove old PDFs [skip ci]' --allow-empty
+          git push
+
+      - name: Compile LaTeX document
+        run: latexmk --lualatex main.tex
+
+      - name: Generate build timestamp
         id: timestamp
-        run: |
-          BUILD_TIME=$(date -u +'%Y%m%dT%H%M%SZ')
-          echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
-          echo "PDF_NAME=${LATEX_MAIN%.*}-$BUILD_TIME.pdf" >> $GITHUB_ENV
+        run:
+          echo "BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
 
-      - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cv-pdf
-          path: ${{ env.LATEX_MAIN%.* }}.pdf
+      - name: Rename PDF with timestamp
+        run: mv main.pdf main$BUILD_TIME.pdf
+
+      - name: Commit new PDF
+        run: |
+          git add main$BUILD_TIME.pdf
+          git commit -m 'Add new PDF version [skip ci]'
+          git push
 
   deploy:
     needs: compile
     runs-on: ubuntu-22.04
-    env:
-      TZ: ${{ env.TIMEZONE }}
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
+      - name: Checkout latest code
+        uses: actions/checkout@v4
         with:
-          name: cv-pdf
-          path: ./artifacts
+          fetch-depth: 0
 
-      - name: Setup files
+      - name: Pull latest changes
         run: |
-          mkdir -p out
-          TIMESTAMP=${{ needs.compile.outputs.build_time }}
-          mv ./artifacts/${LATEX_MAIN%.*}.pdf "./out/$CV_NAME-$TIMESTAMP.pdf"
+          git config --global user.email "action[bot]@github.com"
+          git config --global user.name "github-actions[bot]"
+          git pull origin main
 
-      - name: Generate preview
+      - name: Set environment variables
         run: |
-          convert -density 300 -background white -alpha remove \
-          "./out/$CV_NAME-${{ needs.compile.outputs.build_time }}.pdf[0]" \
-          -resize 25% \
-          -quality 75 \
-          preview.jpg
+          echo "CHANGELOG=$(TZ=':Europe/Paris' date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$(TZ=':Europe/Paris' date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
+          echo "PDF_FILE=main$BUILD_TIME.pdf" >> $GITHUB_ENV
 
-      - name: Create release
+      - name: Setup output directory
+        run: mkdir -p out
+
+      - name: Prepare PDF for deployment
+        run: cp $PDF_FILE ./out/CV_NAME.pdf
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update --fix-missing
+          sudo apt install -y ghostscript imagemagick
+
+      - name: Adjust ImageMagick policies
+        run: |
+          sudo sed -i \
+            -e 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' \
+            -e 's/name="memory" value="256MiB"/name="memory" value="2GiB"/' \
+            -e 's/name="map" value="512MiB"/name="map" value="4GiB"/' \
+            /etc/ImageMagick-6/policy.xml
+
+      - name: Generate preview image
+        run: |
+          convert -density 900 -alpha off ./out/CV_NAME.pdf \
+            -resize 15% \
+            -quality 50 \
+            CV_NAME.png
+
+      - name: Update preview image
+        run: |
+          git add CV_NAME.png
+          git commit -m 'Update preview image [skip ci]'
+          git push
+
+      - name: Regenerate README
+        run: |
+          echo "# Professional CV" > README.md
+          echo "" >> README.md
+          echo "**Latest update:** $CHANGELOG" >> README.md
+          echo "" >> README.md
+          echo "> Note: Clear your cache if dates don't match" >> README.md
+          echo "" >> README.md
+          echo "| Preview | Download |" >> README.md
+          echo "|---------|----------|" >> README.md
+          echo "| [![CV Preview](CV_NAME.png)](https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/CV_NAME.pdf) | [Download PDF](https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/CV_NAME.pdf) |" >> README.md
+
+      - name: Commit updated README
+        run: |
+          git add README.md
+          git commit -m 'Update README with new version [skip ci]'
+          git push
+
+      - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v${{ needs.compile.outputs.build_time }}"
-          name: "CV Version ${{ needs.compile.outputs.build_time }}"
-          files: |
-            ./out/$CV_NAME-${{ needs.compile.outputs.build_time }}.pdf
-            preview.jpg
-
-      - name: Update repository
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git add preview.jpg
-          git commit -m "Update CV preview [skip ci]"
-          git push
+          name: ${{ env.RELEASE_NAME }}
+          tag_name: ${{ env.RELEASE_NAME }}
+          body: |
+            **CV Update Details**
+           
+            - Generated: ${{ env.CHANGELOG }}
+            - Version: ${{ env.RELEASE_NAME }}
+           
+            [View commit history](https://github.com/${{ github.repository }}/commits/main)
+          files: ./out/CV_NAME.pdf
