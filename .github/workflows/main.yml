@@ -12,16 +12,16 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     container: texlive/texlive:latest
+    outputs:
+      build_time: ${{ steps.timestamp.outputs.build_time }}  # Transmission du timestamp
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Add workspace permissions
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-      - name: Set Git identity
+      - name: Configure Git
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.email "95414249+c2tz@users.noreply.github.com"
           git config --global user.name "c2tz"
 
@@ -31,21 +31,19 @@ jobs:
           git commit -m 'Remove old PDFs [skip ci]' --allow-empty
           git push
 
-      - name: Compile LaTeX document
+      - name: Compile LaTeX
         run: latexmk --lualatex main.tex
 
-      - name: Generate build timestamp
+      - name: Generate timestamp
         id: timestamp
         run: |
           BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y-%m-%d_%H-%M-%S')
-          echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
           echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
+          echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
 
-      - name: Rename PDF with timestamp
-        run: mv main.pdf main$BUILD_TIME.pdf
-
-      - name: Commit new PDF
+      - name: Rename and commit PDF
         run: |
+          mv main.pdf main$BUILD_TIME.pdf
           git add main$BUILD_TIME.pdf
           git commit -m 'Add new PDF version [skip ci]'
           git push
@@ -55,89 +53,66 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout latest code
+      - name: Checkout develop branch
         uses: actions/checkout@v4
         with:
+          ref: develop
           fetch-depth: 0
 
-      - name: Pull latest changes
-        run: |
-          git config --global user.email "action[bot]@github.com"
-          git config --global user.name "github-actions[bot]"
-          git pull origin main
+      - name: Sync workspace
+        run: git pull origin develop
 
-      - name: Generate build timestamp one more time
-        id: timestamp
+      - name: Setup variables
         run: |
-          BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y-%m-%d_%H-%M-%S')
-          echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
-          echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
-
-      - name: Set environment variables
-        run: |
+          echo "BUILD_TIME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
+          echo "RELEASE_NAME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
           echo "CHANGELOG=$(TZ=':Europe/Paris' date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
-          echo "RELEASE_NAME=$(TZ=':Europe/Paris' date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
 
-      - name: Setup output directory
-        run: mkdir -p out
-
-      - name: Prepare PDF for deployment
-        run: cp main$BUILD_TIME.pdf ./out/CV_NAME.pdf
-
-      - name: Install dependencies
+      - name: Prepare assets
         run: |
-          sudo apt-get update --fix-missing
-          sudo apt install -y ghostscript imagemagick
+          mkdir -p out
+          cp main$BUILD_TIME.pdf ./out/CV_NAME.pdf
 
-      - name: Adjust ImageMagick policies
+      - name: Configure ImageMagick
         run: |
+          sudo apt-get update
+          sudo apt-get install -y ghostscript imagemagick
           sudo sed -i \
-            -e 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' \
-            -e 's/name="memory" value="256MiB"/name="memory" value="2GiB"/' \
-            -e 's/name="map" value="512MiB"/name="map" value="4GiB"/' \
+            '/pattern="PDF"/s/none/read|write/; 
+            /memory value/s/256MiB/2GiB/; 
+            /map value/s/512MiB/4GiB/' \
             /etc/ImageMagick-6/policy.xml
 
-      - name: Generate preview image
-        run: |
-          convert -density 900 -alpha off ./out/CV_NAME.pdf \
-            -resize 15% \
-            -quality 50 \
-            CV_NAME.png
+      - name: Generate preview
+        run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 15% -quality 50 CV_NAME.png
 
-      - name: Update preview image
+      - name: Update repository
         run: |
           git add CV_NAME.png
-          git commit -m 'Update preview image [skip ci]'
+          git commit -m 'Update preview [skip ci]'
           git push
 
-      - name: Regenerate README
+      - name: Generate README
         run: |
-          echo "# Professional CV" > README.md
-          echo "" >> README.md
-          echo "**Latest update:** $CHANGELOG" >> README.md
-          echo "" >> README.md
-          echo "> Note: Clear your cache if dates don't match" >> README.md
-          echo "" >> README.md
-          echo "| Preview | Download |" >> README.md
-          echo "|---------|----------|" >> README.md
-          echo "| [![CV Preview](CV_NAME.png)](https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/CV_NAME.pdf) | [Download PDF](https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/CV_NAME.pdf) |" >> README.md
+          cat <<EOF > README.md
+          # Professional CV
 
-      - name: Commit updated README
-        run: |
-          git add README.md
-          git commit -m 'Update README with new version [skip ci]'
-          git push
+          **Latest update:** $CHANGELOG
 
-      - name: Create GitHub release
+          > Note: Clear your cache if dates don't match
+
+          | Preview | Download |
+          |---------|----------|
+          | [![CV Preview](CV_NAME.png)](https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/CV_NAME.pdf) | [Download PDF](https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/CV_NAME.pdf) |
+          EOF
+
+      - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ env.RELEASE_NAME }}
           tag_name: ${{ env.RELEASE_NAME }}
           body: |
-            **CV Update Details**
-           
-            - Generated: ${{ env.CHANGELOG }}
-            - Version: ${{ env.RELEASE_NAME }}
-           
-            [View commit history](https://github.com/${{ github.repository }}/commits/main)
+            **CV Update**  
+            Generated: ${{ env.CHANGELOG }}  
+            Version: ${{ env.RELEASE_NAME }}
           files: ./out/CV_NAME.pdf
