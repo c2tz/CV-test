@@ -1,0 +1,6 @@
+*.aux
+*.log
+*.out
+
+/out/*
+!/out/CV_NAME.pdf
