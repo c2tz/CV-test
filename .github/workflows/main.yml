@@ -66,18 +66,23 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git pull origin main
 
+      - name: Generate build timestamp one more time
+        id: timestamp
+        run: |
+          BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y-%m-%d_%H-%M-%S')
+          echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
+          echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
+
       - name: Set environment variables
         run: |
           echo "CHANGELOG=$(TZ=':Europe/Paris' date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(TZ=':Europe/Paris' date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
-          echo "BUILD_TIME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
-          echo "PDF_FILE=main$BUILD_TIME.pdf" >> $GITHUB_ENV
 
       - name: Setup output directory
         run: mkdir -p out
 
       - name: Prepare PDF for deployment
-        run: cp $PDF_FILE ./out/CV_NAME.pdf
+        run: cp main$BUILD_TIME.pdf ./out/CV_NAME.pdf
 
       - name: Install dependencies
         run: |
