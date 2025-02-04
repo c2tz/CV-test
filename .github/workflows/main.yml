@@ -86,6 +86,11 @@ jobs:
       - name: Generate preview
         run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 15% -quality 50 CV_NAME.png
 
+      - name: Configure Git identity
+        run: |
+          git config --global user.email "action[bot]@github.com"
+          git config --global user.name "github-actions[bot]"
+
       - name: Update repository
         run: |
           git add CV_NAME.png
