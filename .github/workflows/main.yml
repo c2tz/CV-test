@@ -70,6 +70,7 @@ jobs:
         run: |
           echo "CHANGELOG=$(TZ=':Europe/Paris' date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(TZ=':Europe/Paris' date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
+          echo "BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
           echo "PDF_FILE=main$BUILD_TIME.pdf" >> $GITHUB_ENV
 
       - name: Setup output directory
