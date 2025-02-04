@@ -3,8 +3,6 @@ name: Compile and Deploy PDF
 on:
   push:
     branches: [develop]
-# push:
-#   branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -38,8 +36,10 @@ jobs:
 
       - name: Generate build timestamp
         id: timestamp
-        run:
-          echo "BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
+        run: |
+          BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y-%m-%d_%H-%M-%S')
+          echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
+          echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
 
       - name: Rename PDF with timestamp
         run: mv main.pdf main$BUILD_TIME.pdf
@@ -70,7 +70,7 @@ jobs:
         run: |
           echo "CHANGELOG=$(TZ=':Europe/Paris' date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(TZ=':Europe/Paris' date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
-          echo "BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+          echo "BUILD_TIME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
           echo "PDF_FILE=main$BUILD_TIME.pdf" >> $GITHUB_ENV
 
       - name: Setup output directory
