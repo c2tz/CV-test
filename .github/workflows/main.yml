@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     container: texlive/texlive:latest
     outputs:
-      build_time: ${{ steps.timestamp.outputs.build_time }}  # Transmission du timestamp
+      build_time: ${{ steps.timestamp.outputs.build_time }}
 
     steps:
       - name: Checkout repository
@@ -22,16 +22,12 @@ jobs:
       - name: Configure Git
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config --global user.email "95414249+c2tz@users.noreply.github.com"
-          git config --global user.name "c2tz"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
-      - name: Clean old files
+      - name: Clean old PDFs
         run: |
           git rm --ignore-unmatch *.pdf
-          git rm README.md
-          git rm CV_NAME.png
-          git commit -m 'Remove old PDFs [skip ci]' --allow-empty
-          git push
 
       - name: Compile LaTeX
         run: latexmk --lualatex main.tex
@@ -43,11 +39,11 @@ jobs:
           echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
           echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
 
-      - name: Rename and commit PDF
+      - name: Commit and push results
         run: |
           mv main.pdf main$BUILD_TIME.pdf
           git add main$BUILD_TIME.pdf
-          git commit -m 'Add new PDF version [skip ci]'
+          git commit -m 'Update PDF version [skip ci]'
           git push
 
   deploy:
@@ -55,19 +51,12 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout develop branch
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: develop
-          fetch-depth: 0
-
-      - name: Sync workspace
-        run: git pull origin develop
 
       - name: Setup variables
         run: |
           echo "BUILD_TIME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
-          echo "RELEASE_NAME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
           echo "CHANGELOG=$(TZ=':Europe/Paris' date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
 
       - name: Prepare assets
@@ -75,53 +64,51 @@ jobs:
           mkdir -p out
           cp main$BUILD_TIME.pdf ./out/CV_NAME.pdf
 
-      - name: Configure ImageMagick
+      - name: Install and configure ImageMagick
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ghostscript imagemagick
+          sudo apt-get update && sudo apt-get install -y ghostscript imagemagick
           sudo sed -i \
-            '/pattern="PDF"/s/none/read|write/; 
-            /memory value/s/256MiB/2GiB/; 
+            '/pattern="PDF"/s/none/read|write/;
+            /memory value/s/256MiB/2GiB/;
             /map value/s/512MiB/4GiB/' \
             /etc/ImageMagick-6/policy.xml
 
       - name: Generate preview
         run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 15% -quality 50 CV_NAME.png
 
-      - name: Configure Git identity
-        run: |
-          git config --global user.email "action[bot]@github.com"
-          git config --global user.name "github-actions[bot]"
-          
       - name: Update repository
         run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
           git add CV_NAME.png
           git commit -m 'Update preview [skip ci]'
           git push
-      
-      - name: Create new README.md
-        run: |  
-          echo "__CV TAILLIEZ Clement__" > README.md
-          echo "" >> README.md
-          echo "Note : remember to clear your cache if the release and preview dates don't match, as this means that the image hasn't been updated." > README.md
-          echo "" >> README.md
-          echo "| Preview - click on it to download |" >> README.md
-          echo "| ---------- |" >> README.md
-          echo "| <a href="https://github.com/c2tz/cv-test/releases/download/2025-02-05_00-26-43/CV_NAME.pdf"><img src="https://raw.githubusercontent.com/c2tz/cv-test/develop/CV_NAME.png" alt="CV Preview"></a> |" >> README.md
 
-      - name: Commit README.md
+      - name: Create dynamic README
         run: |
+          cat << EOF > README.md
+          __CV TAILLIEZ Clement__
+
+          Note : remember to clear your cache if the release and preview dates don't match.
+
+          | Preview - click to download |
+          |-----------------------------|
+          | <a href="https://github.com/c2tz/cv-test/releases/download/$BUILD_TIME/CV_NAME.pdf">
+            <img src="https://raw.githubusercontent.com/c2tz/cv-test/develop/CV_NAME.png" alt="CV Preview">
+          </a> |
+          EOF
+
           git add README.md
-          git commit -m "docs(bot): updated README file with new content"
+          git commit -m "docs(bot): updated README"
           git push
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ env.RELEASE_NAME }}
-          tag_name: ${{ env.RELEASE_NAME }}
+          name: ${{ env.BUILD_TIME }}
+          tag_name: ${{ env.BUILD_TIME }}
           body: |
             **CV Update**  
             Generated: ${{ env.CHANGELOG }}  
-            Version: ${{ env.RELEASE_NAME }}
+            Version: ${{ env.BUILD_TIME }}
           files: ./out/CV_NAME.pdf
