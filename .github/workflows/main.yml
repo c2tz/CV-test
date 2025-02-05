@@ -38,20 +38,18 @@ jobs:
           echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
           echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
 
-      - name: Rename and upload PDF
-        run: mv main.pdf main$BUILD_TIME.pdf
-        env:
-          BUILD_TIME: ${{ env.BUILD_TIME }}
+      - name: Rename PDF
+        run: mv main.pdf main${BUILD_TIME}.pdf
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: cv-pdf
-          path: main${{ env.BUILD_TIME }}.pdf
+          path: main${BUILD_TIME}.pdf
 
       - name: Commit and push results
         run: |
-          git add main$BUILD_TIME.pdf
+          git add main${BUILD_TIME}.pdf
           git commit -m 'Update PDF version [skip ci]'
           git push
 
@@ -64,7 +62,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: cv-pdf
-          path: ./out
+          path: ./pdf
+
+      - name: Debug directory structure
+        run: |
+          echo "Contenu du répertoire pdf :"
+          ls -lh ./pdf
+          echo "BUILD_TIME=${BUILD_TIME}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -84,7 +88,10 @@ jobs:
             /etc/ImageMagick-6/policy.xml
 
       - name: Generate preview
-        run: convert -density 900 -alpha off ./out/main$BUILD_TIME.pdf -resize 15% -quality 50 CV_NAME.png
+        run: |
+          mkdir -p out
+          cp ./pdf/main${BUILD_TIME}.pdf ./out/
+          convert -density 900 -alpha off ./out/main${BUILD_TIME}.pdf[0] -resize 15% -quality 50 CV_NAME.png
 
       - name: Update repository
         run: |
