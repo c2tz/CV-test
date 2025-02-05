@@ -26,8 +26,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: Clean old PDFs
-        run: |
-          git rm --ignore-unmatch *.pdf
+        run: git rm --ignore-unmatch *.pdf
 
       - name: Compile LaTeX
         run: latexmk --lualatex main.tex
@@ -39,9 +38,19 @@ jobs:
           echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
           echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
 
+      - name: Rename and upload PDF
+        run: mv main.pdf main$BUILD_TIME.pdf
+        env:
+          BUILD_TIME: ${{ env.BUILD_TIME }}
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cv-pdf
+          path: main${{ env.BUILD_TIME }}.pdf
+
       - name: Commit and push results
         run: |
-          mv main.pdf main$BUILD_TIME.pdf
           git add main$BUILD_TIME.pdf
           git commit -m 'Update PDF version [skip ci]'
           git push
@@ -51,6 +60,12 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Download PDF artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cv-pdf
+          path: ./out
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -58,11 +73,6 @@ jobs:
         run: |
           echo "BUILD_TIME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
           echo "CHANGELOG=$(TZ=':Europe/Paris' date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
-
-      - name: Prepare assets
-        run: |
-          mkdir -p out
-          cp main$BUILD_TIME.pdf ./out/CV_NAME.pdf
 
       - name: Install and configure ImageMagick
         run: |
@@ -74,7 +84,7 @@ jobs:
             /etc/ImageMagick-6/policy.xml
 
       - name: Generate preview
-        run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 15% -quality 50 CV_NAME.png
+        run: convert -density 900 -alpha off ./out/main$BUILD_TIME.pdf -resize 15% -quality 50 CV_NAME.png
 
       - name: Update repository
         run: |
