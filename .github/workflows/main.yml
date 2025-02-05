@@ -124,3 +124,30 @@ jobs:
             Generated: ${{ env.CHANGELOG }}  
             Version: ${{ env.RELEASE_NAME }}
           files: ./out/CV_NAME.pdf
+
+  cleanup:
+    needs: deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0  # Nécessaire pour accéder à l'historique complet
+
+      - name: Configure Git
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global user.email "95414249+c2tz@users.noreply.github.com"
+          git config --global user.name "c2tz"
+
+      - name: Remove last 4 commits
+        run: |
+          # Supprime les 4 derniers commits localement
+          git reset --hard HEAD~4
+          # Force push pour mettre à jour le remote
+          git push --force origin HEAD:develop
+
+      - name: Verify clean history
+        run: git log --oneline -n 3
