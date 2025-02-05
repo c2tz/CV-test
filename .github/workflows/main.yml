@@ -1,8 +1,8 @@
 name: Compile and Deploy PDF
 
 on:
-  push:
-    branches: [develop]
+  #push:
+   # branches: [develop]
   workflow_dispatch:
 
 permissions:
@@ -24,13 +24,13 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.email "95414249+c2tz@users.noreply.github.com"
           git config --global user.name "c2tz"
+      
       - name: Clean old files
         run: |
-          git rm --ignore-unmatch *.pdf
-          git rm README.md
-          git rm CV_NAME.png
+          git rm --ignore-unmatch *.pdf *.md *.png
           git commit -m 'Remove old PDFs [skip ci]' --allow-empty
           git push
+      
       - name: Compile LaTeX
         run: latexmk --lualatex main.tex
 
@@ -40,12 +40,14 @@ jobs:
           BUILD_TIME=$(TZ=':Europe/Paris' date +'%Y-%m-%d_%H-%M-%S')
           echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
           echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
+      
       - name: Rename and commit PDF
         run: |
           mv main.pdf main$BUILD_TIME.pdf
           git add main$BUILD_TIME.pdf
           git commit -m 'Add new PDF version [skip ci]'
           git push
+  
   deploy:
     needs: compile
     runs-on: ubuntu-22.04
@@ -65,10 +67,12 @@ jobs:
           echo "BUILD_TIME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
           echo "RELEASE_NAME=${{ needs.compile.outputs.build_time }}" >> $GITHUB_ENV
           echo "CHANGELOG=$(TZ=':Europe/Paris' date +'%A, %d %B %Y %T %Z')" >> $GITHUB_ENV
+      
       - name: Prepare assets
         run: |
           mkdir -p out
           cp main$BUILD_TIME.pdf ./out/CV_NAME.pdf
+      
       - name: Configure ImageMagick
         run: |
           sudo apt-get update
@@ -78,13 +82,14 @@ jobs:
             /memory value/s/256MiB/2GiB/; 
             /map value/s/512MiB/4GiB/' \
             /etc/ImageMagick-6/policy.xml
+      
       - name: Generate preview
         run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 15% -quality 50 CV_NAME.png
 
       - name: Configure Git identity
         run: |
-          git config --global user.email "95414249+c2tz@users.noreply.github.com"
-          git config --global user.name "c2tz"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
           
       - name: Update repository
         run: |
@@ -101,12 +106,14 @@ jobs:
           echo "| Preview - click on it to download |" >> README.md
           echo "| ---------- |" >> README.md
           echo "| <a href="https://github.com/c2tz/cv-test/releases/download/${{ env.RELEASE_NAME }}/CV_NAME.pdf"><img src="https://raw.githubusercontent.com/c2tz/cv-test/develop/CV_NAME.png" alt="CV Preview"></a> |" >> README.md
+      
       - name: Commit README and png
         run: |
           git add CV_NAME.png
           git add README.md
           git commit -m "docs(bot): updated png and readme with new content"
           git push
+      
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
