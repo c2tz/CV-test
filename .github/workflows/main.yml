@@ -98,8 +98,7 @@ jobs:
           git push
       
       - name: Create new README.md
-        run: |  
-          echo "__CV TAILLIEZ Clement__" > README.md
+        run: |
           echo "" >> README.md
           echo "Note : remember to clear your cache if the release and preview dates don't match, as this means that the image hasn't been updated." > README.md
           echo "" >> README.md
@@ -128,26 +127,28 @@ jobs:
   cleanup:
     needs: deploy
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: develop
-          fetch-depth: 0  # Nécessaire pour accéder à l'historique complet
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: develop
+        fetch-depth: 0  # Nécessaire pour l'historique complet
 
-      - name: Configure Git
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config --global user.email "95414249+c2tz@users.noreply.github.com"
-          git config --global user.name "c2tz"
+    - name: Configure Git
+      run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        git config --global user.email "95414249+c2tz@users.noreply.github.com"
+        git config --global user.name "c2tz"
 
-      - name: Remove last 4 commits
-        run: |
-          # Supprime les 4 derniers commits localement
-          git reset --hard HEAD~4
-          # Force push pour mettre à jour le remote
-          git push --force origin HEAD:develop
+    - name: Squash last 4 commits
+      run: |
+        # Réinitialise à l'avant-dernier commit +4
+        git reset --soft HEAD~4
+        # Recrée un seul commit combiné
+        git commit -m "🔄 Full update (PDF + preview + README) [bot workflow]" --no-verify
 
-      - name: Verify clean history
-        run: git log --oneline -n 3
+    - name: Force push cleaned history
+      run: git push --force origin HEAD:develop
+
+    - name: Verify history
+      run: git log --oneline -n 3
