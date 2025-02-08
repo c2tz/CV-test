@@ -73,15 +73,15 @@ jobs:
           mkdir -p out
           cp main$BUILD_TIME.pdf ./out/CV_NAME.pdf
       
-      - name: Configure ImageMagick
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ghostscript imagemagick
-          sudo sed -i \
-            '/pattern="PDF"/s/none/read|write/; 
-            /memory value/s/256MiB/2GiB/; 
-            /map value/s/512MiB/4GiB/' \
-            /etc/ImageMagick-6/policy.xml
+     # - name: Configure ImageMagick
+     #   run: |
+     #     sudo apt-get update
+     #     sudo apt-get install -y ghostscript imagemagick
+     #     sudo sed -i \
+     #       '/pattern="PDF"/s/none/read|write/; 
+     #       /memory value/s/256MiB/2GiB/; 
+     #       /map value/s/512MiB/4GiB/' \
+     #       /etc/ImageMagick-6/policy.xml
       
      # - name: Generate preview
      #   run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 15% -quality 50 CV_NAME.png
@@ -108,7 +108,7 @@ jobs:
       
       - name: Commit README and png
         run: |
-          git add CV_NAME.png
+          # git add CV_NAME.png
           git add README.md
           git commit -m "docs(bot): updated png and readme with new content"
           git push
