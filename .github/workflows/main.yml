@@ -78,13 +78,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ghostscript imagemagick
           sudo sed -i \
-            '/pattern="PDF"/s/none/read|write/; 
-            /memory value/s/256MiB/2GiB/; 
-            /map value/s/512MiB/4GiB/' \
-            /etc/ImageMagick-6/policy.xml
+          '/pattern="PDF"/s/none/read|write/; 
+          /memory value/s/256MiB/0/; 
+          /map value/s/512MiB/0/; 
+          /disk value/s/none/0/' \
+          /etc/ImageMagick-6/policy.xml
       
       - name: Generate preview
-        run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 50% -quality 40 CV_NAME.png
+        run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 70% -quality 40 CV_NAME.png
 
       - name: Configure Git identity
         run: |
