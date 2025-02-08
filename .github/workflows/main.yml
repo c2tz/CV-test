@@ -1,8 +1,8 @@
 name: Compile and Deploy PDF
 
 on:
-  #push:
-   # branches: [develop]
+  push:
+    branches: [develop]
   workflow_dispatch:
 
 permissions:
@@ -84,7 +84,7 @@ jobs:
             /etc/ImageMagick-6/policy.xml
       
       - name: Generate preview
-        run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 15% -quality 50 CV_NAME.png
+        run: convert -density 900 -alpha off ./out/CV_NAME.pdf -resize 50% -quality 40 CV_NAME.png
 
       - name: Configure Git identity
         run: |
