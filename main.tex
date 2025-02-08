@@ -1,241 +1,324 @@
-% si format a4
-% \documentclass[a4paper, 11pt, fr-FR]{article}
-% si format us letter
-\documentclass[10pt, fr-FR]{article}
-%=================== Packages ===================
-\usepackage{amsmath}
-\usepackage[french]{babel}
-\usepackage[autolanguage]{numprint}
-\usepackage{transparent}
-\usepackage{hyphenat}
-\usepackage{tabularx}
-\usepackage{array}
-\usepackage[ignoreheadfoot,top=1 cm,bottom=2 cm,left=2 cm,right=2 cm,footskip=1.0 cm]{geometry}
-\usepackage{graphicx}
-\usepackage[explicit]{titlesec}
-\usepackage[dvipsnames]{xcolor}
-\usepackage{enumitem}
-\usepackage{fontawesome5}
-\usepackage{datetime2}
-\usepackage{pifont}
-\usepackage[pdftitle={Clément TAILLIEZ - CV},pdfauthor={Clément TAILLIEZ},colorlinks=true,urlcolor=primaryColor]{hyperref}
-\usepackage{fancyhdr} % Ajout du package fancyhdr
-\usepackage[pscoord]{eso-pic}
-\usepackage{calc}
-\usepackage{bookmark}
-\usepackage{lastpage}
-\usepackage{fontspec}
-\usepackage{ifthen}
-\usepackage[sfdefault]{roboto}
+% \documentclass[10pt, letterpaper]{article}
+\documentclass[a4paper, 11pt]{article}
+% Packages:
+\usepackage[
+    ignoreheadfoot, % set margins without considering header and footer
+    top=2 cm, % seperation between body and page edge from the top
+    bottom=2 cm, % seperation between body and page edge from the bottom
+    left=2 cm, % seperation between body and page edge from the left
+    right=2 cm, % seperation between body and page edge from the right
+    footskip=1.0 cm, % seperation between body and footer
+    % showframe % for debugging 
+]{geometry} % for adjusting page geometry
+\usepackage[explicit]{titlesec} % for customizing section titles
+\usepackage{tabularx} % for making tables with fixed width columns
+\usepackage{array} % tabularx requires this
+\usepackage[dvipsnames]{xcolor} % for coloring text
+\definecolor{primaryColor}{RGB}{0, 79, 144} % define primary color
+\usepackage{enumitem} % for customizing lists
+\usepackage{fontawesome5} % for using icons
+\usepackage{amsmath} % for math
+\usepackage[
+    pdftitle={John Doe's CV},
+    pdfauthor={John Doe},
+    pdfcreator={LaTeX with RenderCV},
+    colorlinks=true,
+    urlcolor=primaryColor
+]{hyperref} % for links, metadata and bookmarks
+\usepackage[pscoord]{eso-pic} % for floating text on the page
+\usepackage{calc} % for calculating lengths
+\usepackage{bookmark} % for bookmarks
+\usepackage{lastpage} % for getting the total number of pages
+\usepackage{changepage} % for one column entries (adjustwidth environment)
+\usepackage{paracol} % for two and three column entries
+\usepackage{ifthen} % for conditional statements
+\usepackage{needspace} % for avoiding page brake right after the section title
+\usepackage{iftex} % check if engine is pdflatex, xetex or luatex
 
-%============= Additional Settings ==============
-\definecolor{primaryColor}{HTML}{0D47A1} %blue900
-\definecolor{secondaryColor}{HTML}{9E9E9E} %grey500
-\DTMsetup{datesep=/,hourminsep=h,minsecsep=:}
-\frenchbsetup{StandardLists=true}
-\DTMsetstyle{default}
-\DTMsetdatestyle{ddmmyyyy}
-\hyphenation{MicroTik Roundcube Radius}
-\setcounter{secnumdepth}{0}
-\setlength{\parindent}{0pt}
-\setlength{\topskip}{0pt}
+% Ensure that generate pdf is machine readable/ATS parsable:
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{lmodern}
+\fi
 
-% Configuration du style de pied de page
-\pagestyle{fancy}
-\fancyhf{} % Effacer les en-têtes et pieds de page par défaut
-\fancyhead{} % Effacer l'en-tête
-\fancyfoot[C]{% Centrer le contenu du pied de page
-    \color{secondaryColor} % Date et heure
-    \textit{\small Clément Tailliez - p.\thepage{} sur \pageref*{LastPage}} \\% Numéro de page
-    \textit{\small{maj : le }}%
-    \textit{\small\textit\date{\today} à \DTMcurrenttime{}} \\
-}
-\renewcommand{\headrulewidth}{0pt} % Supprimer la ligne de l'en-tête
-\renewcommand{\footrulewidth}{0pt} % Supprimer la ligne du pied de page
-%\AddToHook{shipout/background}{\put (0in,-\paperheight){\transparent{0.5}\includegraphics[width=\paperwidth,height=\paperheight]{bg.png}}}
-\titleformat{\section}{\Large\color{primaryColor}}{}{}{\textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}}[]
-\titlespacing{\section}{0pt}{0.3 cm}{0.2 cm}
-\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
-\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
-\newcolumntype{K}[1]{>{\let\newline\\\arraybackslash\hspace{0pt}}X}
-\setlength\tabcolsep{-1.5pt}
-\newenvironment{highlights}{\begin{itemize}[topsep=0pt,parsep=0.10 cm,partopsep=0pt,itemsep=0pt,after=\vspace{-1\baselineskip},leftmargin=0.4 cm + 3pt]}{\end{itemize}}
-\newenvironment{header}{\setlength{\topsep}{0pt}\par\kern\topsep\centering\color{primaryColor}\linespread{1.5}}{\par\kern\topsep}
+\usepackage[default, type1]{sourcesanspro} 
+
+% Some settings:
+\AtBeginEnvironment{adjustwidth}{\partopsep0pt} % remove space before adjustwidth environment
+\pagestyle{empty} % no header or footer
+\setcounter{secnumdepth}{0} % no section numbering
+\setlength{\parindent}{0pt} % no indentation
+\setlength{\topskip}{0pt} % no top skip
+\setlength{\columnsep}{0.15cm} % set column seperation
+\makeatletter
+\let\ps@customFooterStyle\ps@plain % Copy the plain style to customFooterStyle
+\patchcmd{\ps@customFooterStyle}{\thepage}{
+    \color{gray}\textit{\small John Doe - Page \thepage{} of \pageref*{LastPage}}
+}{}{} % replace number by desired string
+\makeatother
+\pagestyle{customFooterStyle}
+
+\titleformat{\section}{
+    % avoid page braking right after the section title
+    \needspace{4\baselineskip}
+    % make the font size of the section title large and color it with the primary color
+    \Large\color{primaryColor}
+}{
+}{
+}{
+    % print bold title, give 0.15 cm space and draw a line of 0.8 pt thickness
+    % from the end of the title to the end of the body
+    \textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}
+}[] % section title formatting
+
+\titlespacing{\section}{
+    % left space:
+    -1pt
+}{
+    % top space:
+    0.3 cm
+}{
+    % bottom space:
+    0.2 cm
+} % section title spacing
+
+% \renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$} % custom bullet points
+\newenvironment{highlights}{
+    \begin{itemize}[
+        topsep=0.10 cm,
+        parsep=0.10 cm,
+        partopsep=0pt,
+        itemsep=0pt,
+        leftmargin=0.4 cm + 10pt
+    ]
+}{
+    \end{itemize}
+} % new environment for highlights
+
+\newenvironment{highlightsforbulletentries}{
+    \begin{itemize}[
+        topsep=0.10 cm,
+        parsep=0.10 cm,
+        partopsep=0pt,
+        itemsep=0pt,
+        leftmargin=10pt
+    ]
+}{
+    \end{itemize}
+} % new environment for highlights for bullet entries
+
+
+\newenvironment{onecolentry}{
+    \begin{adjustwidth}{
+        0.2 cm + 0.00001 cm
+    }{
+        0.2 cm + 0.00001 cm
+    }
+}{
+    \end{adjustwidth}
+} % new environment for one column entries
+
+\newenvironment{twocolentry}[2][]{
+    \onecolentry
+    \def\secondColumn{#2}
+    \setcolumnwidth{\fill, 4.5 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endonecolentry
+} % new environment for two column entries
+
+\newenvironment{threecolentry}[3][]{
+    \onecolentry
+    \def\thirdColumn{#3}
+    \setcolumnwidth{1 cm, \fill, 4.5 cm}
+    \begin{paracol}{3}
+    {\raggedright #2} \switchcolumn
+}{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
+    \endonecolentry
+} % new environment for three column entries
+
+\newenvironment{header}{
+    \setlength{\topsep}{0pt}\par\kern\topsep\centering\color{primaryColor}\linespread{1.5}
+}{
+    \par\kern\topsep
+} % new environment for the header
+
+\newcommand{\placelastupdatedtext}{% \placetextbox{<horizontal pos>}{<vertical pos>}{<stuff>}
+  \AddToShipoutPictureFG*{% Add <stuff> to current page foreground
+    \put(
+        \LenToUnit{\paperwidth-2 cm-0.2 cm+0.05cm},
+        \LenToUnit{\paperheight-1.0 cm}
+    ){\vtop{{\null}\makebox[0pt][c]{
+        \small\color{gray}\textit{Last updated in September 2024}\hspace{\widthof{Last updated in September 2024}}
+    }}}%
+  }%
+}%
+
+% save the original href command in a new command:
 \let\hrefWithoutArrow\href
-\renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\mbox{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}}
-\let\originalTabularx\tabularx
-\let\originalEndTabularx\endtabularx
-\renewenvironment{tabularx}{\bgroup\centering\originalTabularx}{\originalEndTabularx\par\egroup}
-\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1\topsep=0pt\itemsep=0pt\parsep=0pt\parskip=0pt\labelwidth=0pt\itemindent=0pt\labelsep=0pt}\item[]}
-\let\endchangemargin=\endlist
-%==================== Start ===================== Actualy in progress
+
+% new command for external links:
+\renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}
+
+
 \begin{document}
-% header ----------------------------------------
-\begin{header}
-	\fontsize{26 pt}{26 pt}
-	\textbf{Clément Tailliez}
-	% space -----------------------------------------
+    \newcommand{\AND}{\unskip
+        \cleaders\copy\ANDbox\hskip\wd\ANDbox
+        \ignorespaces
+    }
+    \newsavebox\ANDbox
+    \sbox\ANDbox{}
 
-	\vspace{0.3 cm}
-	\normalsize
-	\mbox{\hrefWithoutArrow{tel:+33643830403}{{\footnotesize\faPhone*}\hspace*{0.13cm}{+33 6 43 83 04 03}}}
-	\hspace*{0.5 cm}
-	\mbox{\hrefWithoutArrow{mailto:c2tz@cta.li}{{\small\faEnvelope[regular]}\hspace*{0.13cm}{c2tz@cta.li}}}
-	\hspace*{0.5 cm}
-	\mbox{\hrefWithoutArrow{https://maps.app.goo.gl/z56isr7ngoKffSCT9}{{\small\faMapMarker}\hspace*{0.13cm}{Artiguelouve (64)}}}
-	\hspace{0.5 cm}
-	\mbox{{{\small\faCar}\hspace*{0.13cm}{Permis B}}}
-\end{header}
-% diplome ----------------------------------------
-\section{Diplômes - Formations}
-\begin{tabularx}{
-		\textwidth-0.4 cm-0.13cm
-	}{
-		K{0.2 cm}
-		R{4.1 cm}
-	}
-	\textbf{BTS SIO}, \textbf{\textit{R}}éseau \textbf{\textit{I}}nfrastucture et \textbf{\textit{S}}ystème \textbf{\textit{C}}ommuniquant
+    \placelastupdatedtext
+    \begin{header}
+        \fontsize{30 pt}{30 pt}
+        \textbf{John Doe}
 
-	\hspace{0 cm}
-	\textbf{Cours :}
-	\vspace{0.10 cm}
+        \vspace{0.3 cm}
 
-	\begin{highlights}
-		\item Réseau : LAMP, HAProxy, PFSense, GLPI (OCS, FI), AirWatch, Zentyal, MicroTik, Radius, NextCloud, Proxmox, IPTable, Asterisk
-		\item Développement : SQL, Python, PowerShell, Bash, XML
-	\end{highlights}
-	 &
-	Sept. 2019 - Juil. 2021
-	Lycée Saint-John-Perse
-	Pau (64)
-\end{tabularx}
+        \normalsize
+        \mbox{{\footnotesize\faMapMarker*}\hspace*{0.13cm}Your Location}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{mailto:youremail@yourdomain.com}{{\footnotesize\faEnvelope[regular]}\hspace*{0.13cm}youremail@yourdomain.com}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{tel:+90-541-999-99-99}{{\footnotesize\faPhone*}\hspace*{0.13cm}0541 999 99 99}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://yourwebsite.com/}{{\footnotesize\faLink}\hspace*{0.13cm}yourwebsite.com}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://linkedin.com/in/yourusername}{{\footnotesize\faLinkedinIn}\hspace*{0.13cm}yourusername}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://github.com/yourusername}{{\footnotesize\faGithub}\hspace*{0.13cm}yourusername}}%
+    \end{header}
 
-\vspace{0.20cm}
+    \vspace{0.3 cm - 0.3 cm}
 
-\begin{tabularx}{
-		\textwidth-0.4 cm-0.13cm
-	}{
-		K{0.2 cm}
-		R{4.1 cm}
-	}
-	\textbf{BAC PRO SN}, \textbf{\textit{S}}olutions d'\textbf{\textit{I}}nfrastructures, \textbf{\textit{S}}ystèmes et \textbf{\textit{R}}éseaux
 
-	\hspace{0 cm}
-	\textbf{Cours :}
-	\vspace{0.10 cm}
+    \section{Welcome to RenderCV!}
 
-	\begin{highlights}
-		\item Réseau : Switch Cisco, Nortel, HP, Windows Server, Debian, bases réseaux (IPv4-6, GW, masque, DHCP, DNS, SSH, VPN, TLD, routes...)
-		\item Développement : Batch, C++
-	\end{highlights}
-	 &
-	Sept. 2016 - Juin 2019
-	Lycée Guynemer
-	Oloron-Ste-Marie (64)
-\end{tabularx}
 
-\section{Expériences Professionnelles}
 
-\begin{tabularx}{
-		\textwidth-0.4 cm-0.13cm
-	}{
-		K{0.2 cm}
-		R{4.1 cm}
-	}
-	\textbf{Tibco Services}, Technicien Retail n+2 itinérant
-	\vspace{0.10 cm}
-	\begin{highlights}
-		\item Interventions IMAC et MCO : 64, 65 pour BPCE-IT, PMU, BNP, CCF, RCBT, Sephora, Macif, Ortec, U GIE IRIS, CAPG, Yves Rocher, InitSys, Hub One, Euralis, Nickel... Masterisation postes, inventaire, déploiement, logistique, retail (TPV, TPE, douchette, imp ticket), imprimante (Brother, HP, Lexmark), assistance utilisateurs, remplacement équipements réseaux et télécoms divers.
-	\end{highlights}
-	 &
-	Jan. 2022 - présent
+        
+        \begin{onecolentry}
+            \href{https://rendercv.com}{RenderCV} is a LaTeX-based CV/resume version-control and maintenance app. It allows you to create a high-quality CV or resume as a PDF file from a YAML file, with \textbf{Markdown syntax support} and \textbf{complete control over the LaTeX code}.
+        \end{onecolentry}
 
-    CDI
+        \vspace{0.2 cm}
 
-    Pau
-\end{tabularx}
+        \begin{onecolentry}
+            The boilerplate content was inspired by \href{https://github.com/dnl-blkv/mcdowell-cv}{Gayle McDowell}.
+        \end{onecolentry}
 
-\vspace{0.2 cm}
 
-\begin{tabularx}{
-		\textwidth-0.4 cm-0.13cm
-	}{
-		K{0.2 cm}
-		R{4.1 cm}
-	}
-	\textbf{DEFI Informatique}, Support Technique n+2 et supervision
-	\vspace{0.10 cm}
-	\begin{highlights}
-		\item Installation et dépannage d'un PGI (Gescof), VPS OVH, Mail (MX, Roundcube), carbonite, Zabbix, traitement tickets (logiciel interne), création scripts et documentations, debug BDD (MS Access, SQL Server ) + gestion sur site
-		Switch TPLink (QOS, VLAN), serveur WSUS. \end{highlights}
-	 &
-	Juil. 2021 - Jan. 2022
-
-	CDD
-
-	Abos (64)
-
-\end{tabularx}
-
-\vspace{0.2 cm}
-
-\begin{tabularx}{
-		\textwidth-0.4 cm-0.13cm
-	}{
-		K{0.2 cm}
-		R{4.1 cm}
-	}
-	\textbf{2 Stages}, en BTS \textbf{\textit{S}}ervice \textbf{\textit{I}}nformatique aux \textbf{\textit{O}}rganisation
-	\vspace{0.10 cm}
-	\begin{highlights}
-		\item Du 22/02/21 au 09/04/21 : Dépannage utilisateurs n+1, masterisation postes, créations documentations, scripts PowerShell, dépannage agence (PLV, hardware), enrôlement (airwatch).
-		\item Du 25/05/20 au 26/06/20 : Traitement d'export avec Excel, création de script batch, deploiement de poste (marimba), depannage salle de reunion, conférence (Projecteur, pieuvre Jabra...).
-	\end{highlights}
-	 &
-	4 et 7 semaines
-
-	Serres-Castet (64)
-\end{tabularx}
-
-\vspace{0.2 cm}
-
-\begin{tabularx}{
-		\textwidth-0.4 cm-0.13cm
-	}{
-		K{0.2 cm}
-		R{4.1 cm}
-	}
-	\textbf{6 Stages}, en BAC PRO \textbf{\textit{S}}ystème \textbf{\textit{N}}umérique
-	\vspace{0.10 cm}
-	\begin{highlights}
-		\item Scopelec, VBI, Département 64, Disi (DGFIP), Ville de Pau (Service feu tricolore) et Emmaüs : Aide et dépannage varié, principalement Hardware.
-	\end{highlights}
-	 &
-	25 semaines
     
-    \textbf{\approx} Pau
-\end{tabularx}
+    \section{Quick Guide}
 
-\section{Compétences Acquises}
+    \begin{onecolentry}
+        \begin{highlightsforbulletentries}
 
-\begingroup\leftskip=0.2 cm
-\advance\csname @rightskip\endcsname 0.2 cm
-\advance\rightskip 0.2 cm
 
-\textbf{Languages:} \LaTeX, Assembleur, CSS, JavaScript, Anglais B1 (intermediate) \par\endgroup
+        \item Each section title is arbitrary and each section contains a list of entries.
 
-\vspace{0.2 cm}
-\begingroup\leftskip=0.2 cm
-\advance\csname @rightskip\endcsname 0.2 cm
-\advance\rightskip 0.2 cm
+        \item There are 7 unique entry types: \textit{BulletEntry}, \textit{TextEntry}, \textit{EducationEntry}, \textit{ExperienceEntry}, \textit{NormalEntry}, \textit{PublicationEntry}, and \textit{OneLineEntry}.
 
-\textbf{Software:} Office 365, G Workspace, IDA Pro, Git, VScode, Inkscape, DSM, GrapheneOS, Docker \par\endgroup
+        \item Select a section title, pick an entry type, and start writing your section!
 
-\section{Centres d'intérêt}
+        \item \href{https://docs.rendercv.com/user_guide/}{Here}, you can find a comprehensive user guide for RenderCV.
 
-\begingroup\leftskip=0.2 cm
-\advance\csname @rightskip\endcsname 0.2 cm
-\advance\rightskip 0.2 cm
 
-Réseau \& développement, VTT, gaming, musique. \par\endgroup
+        \end{highlightsforbulletentries}
+    \end{onecolentry}
+
+    \section{Education}
+
+
+
+        
+        \begin{threecolentry}{\textbf{BS}}{
+            Sept 2000 – May 2005
+        }
+            \textbf{University of Pennsylvania}, Computer Science
+            \begin{highlights}
+                \item GPA: 3.9/4.0 (\href{https://example.com}{a link to somewhere})
+                \item \textbf{Coursework:} Computer Architecture, Comparison of Learning Algorithms, Computational Theory
+            \end{highlights}
+        \end{threecolentry}
+
+
+    
+    \section{Experience}
+
+
+
+        
+        \begin{twocolentry}{
+            Cupertino, CA
+
+        June 2005 – Aug 2007
+        }
+            \textbf{Apple}, Software Engineer
+            \begin{highlights}
+                \item Reduced time to render user buddy lists by 75\% by implementing a prediction algorithm
+                \item Integrated iChat with Spotlight Search by creating a tool to extract metadata from saved chat transcripts and provide metadata to a system-wide search database
+                \item Redesigned chat file format and implemented backward compatibility for search
+            \end{highlights}
+        \end{twocolentry}
+
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Redmond, WA
+
+        June 2003 – Aug 2003
+        }
+            \textbf{Microsoft}, Software Engineer Intern
+            \begin{highlights}
+                \item Designed a UI for the VS open file switcher (Ctrl-Tab) and extended it to tool windows
+                \item Created a service to provide gradient across VS and VS add-ins, optimizing its performance via caching
+                \item Built an app to compute the similarity of all methods in a codebase, reducing the time from $\mathcal{O}(n^2)$ to $\mathcal{O}(n \log n)$
+                \item Created a test case generation tool that creates random XML docs from XML Schema
+                \item Automated the extraction and processing of large datasets from legacy systems using SQL and Perl scripts
+            \end{highlights}
+        \end{twocolentry}
+
+
+
+    
+    \section{Publications}
+
+
+
+        
+        \begin{samepage}
+            \begin{twocolentry}{
+                Jan 2004
+            }
+                \textbf{3D Finite Element Analysis of No-Insulation Coils}
+
+                \vspace{0.10 cm}
+
+                \mbox{Frodo Baggins}, \mbox{\textbf{\textit{John Doe}}}, \mbox{Samwise Gamgee}
+                \vspace{0.10 cm}
+
+        \href{https://doi.org/10.1109/TASC.2023.3340648}{10.1109/TASC.2023.3340648}
+            \end{twocolentry}
+        \end{samepage}
+
 \end{document}
