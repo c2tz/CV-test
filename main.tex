@@ -34,6 +34,7 @@
 \usepackage{ifthen} % for conditional statements
 \usepackage{needspace} % for avoiding page brake right after the section title
 \usepackage{iftex} % check if engine is pdflatex, xetex or luatex
+\usepackage{datetime2}
 
 % Ensure that generate pdf is machine readable/ATS parsable:
 \ifPDFTeX
@@ -44,7 +45,7 @@
     \usepackage{lmodern}
 \fi
 
-\usepackage[default, type1]{sourcesanspro} 
+\usepackage[sfdefault]{roboto}
 
 % Some settings:
 \AtBeginEnvironment{adjustwidth}{\partopsep0pt} % remove space before adjustwidth environment
@@ -56,8 +57,13 @@
 \makeatletter
 \let\ps@customFooterStyle\ps@plain % Copy the plain style to customFooterStyle
 \patchcmd{\ps@customFooterStyle}{\thepage}{
-    \color{gray}\textit{\small John Doe - Page \thepage{} of \pageref*{LastPage}}
-}{}{} % replace number by desired string
+    \color{gray}\begin{minipage}{\textwidth}
+        \centering % Centre le contenu de la minipage
+        \textit{\small Clément Tailliez - p.\thepage{} sur \pageref*{LastPage}}\\
+        \textit{\small{maj : le }}%
+        \textit{\small\textit\date{\today} à \DTMcurrenttime{}}
+    \end{minipage}
+}{} {}
 \makeatother
 \pagestyle{customFooterStyle}
 
@@ -255,8 +261,10 @@
 
         \begin{twocolentry}{
             Redmond, WA
-
+        
         June 2003 – Aug 2003
+
+        aaaaa
         }
             \textbf{Microsoft}, Software Engineer Intern
             \begin{highlights}
@@ -300,7 +308,7 @@
         }
             \textbf{Multi-User Drawing Tool}
             \begin{highlights}
-                \item Developed an electronic classroom where multiple users can simultaneously view and draw on a "chalkboard" with each person's edits synchronized
+                \item Developed an electronic classroom where multiple users can simultaneously view and draw on a "chalkboard" with each person's edits synchronizedDeveloped an electronic classroom where multiple users can simultaneously view and draw on a "chalkboard" with each person's edits synchronizedDeveloped an electronic classroom where multiple users can simultaneously view and draw on a "chalkboard" with each person's edits synchronized
                 \item Tools Used: C++, MFC
             \end{highlights}
         \end{twocolentry}
