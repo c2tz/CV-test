@@ -85,7 +85,7 @@ jobs:
           /etc/ImageMagick-6/policy.xml
       
       - name: Generate preview
-        run: convert -verbose -density 900 -alpha off ./out/CV_NAME.pdf -resize 80% -quality 30 CV_NAME.png
+        run: convert -verbose -density 300 -alpha off ./out/CV_NAME.pdf -resize 80% -quality 30 CV_NAME.png
 
       - name: Configure Git identity
         run: |
