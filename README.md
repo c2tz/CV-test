@@ -2,4 +2,4 @@ Note : remember to clear your cache if the release and preview dates don't match
 
 | Preview - click on it to download |
 | ---------- |
-| <a href=https://github.com/c2tz/cv-test/releases/download/2025-02-09_00-50-20/CV_NAME.pdf><img src=https://raw.githubusercontent.com/c2tz/cv-test/develop/CV_NAME.png alt=CV Preview></a> |
+| <a href=https://github.com/c2tz/cv-test/releases/download/2025-02-11_13-37-23/CV_NAME.pdf><img src=https://raw.githubusercontent.com/c2tz/cv-test/develop/CV_NAME.png alt=CV Preview></a> |
