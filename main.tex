@@ -3,10 +3,10 @@
 % Packages:
 \usepackage[
     ignoreheadfoot, % set margins without considering header and footer
-    top=1 cm, % seperation between body and page edge from the top
-    bottom=2 cm, % seperation between body and page edge from the bottom
-    left=2 cm, % seperation between body and page edge from the left
-    right=2 cm, % seperation between body and page edge from the right
+    top=1.0 cm, % seperation between body and page edge from the top
+    bottom=2.0 cm, % seperation between body and page edge from the bottom
+    left=2.0 cm, % seperation between body and page edge from the left
+    right=2.0 cm, % seperation between body and page edge from the right
     footskip=1.0 cm, % seperation between body and footer
     % showframe % for debugging 
 ]{geometry} % for adjusting page geometry
@@ -19,9 +19,9 @@
 \usepackage{fontawesome5} % for using icons
 \usepackage{amsmath} % for math
 \usepackage[
-    pdftitle={John Doe's CV},
-    pdfauthor={John Doe},
-    pdfcreator={LaTeX with RenderCV},
+    pdftitle={CV},
+    pdfauthor={Clément Tailliez},
+    pdfcreator={Clément Tailliez},
     colorlinks=true,
     urlcolor=primaryColor
 ]{hyperref} % for links, metadata and bookmarks
@@ -34,7 +34,7 @@
 \usepackage{ifthen} % for conditional statements
 \usepackage{needspace} % for avoiding page brake right after the section title
 \usepackage{iftex} % check if engine is pdflatex, xetex or luatex
-\usepackage{datetime2}
+\usepackage{datetime2} % for info about updt in footer
 
 % Ensure that generate pdf is machine readable/ATS parsable:
 \ifPDFTeX
@@ -45,6 +45,7 @@
     \usepackage{lmodern}
 \fi
 
+% Use Roboto as default font
 \usepackage[sfdefault]{roboto}
 
 % Some settings:
@@ -58,7 +59,7 @@
 \let\ps@customFooterStyle\ps@plain % Copy the plain style to customFooterStyle
 \patchcmd{\ps@customFooterStyle}{\thepage}{
     \color{gray}\begin{minipage}{\textwidth}
-        \centering % Centre le contenu de la minipage
+        \centering % Center the text on minipage
         \textit{\small Clément Tailliez - p.\thepage{} sur \pageref*{LastPage}}\\
         \textit{\small{maj : le }}%
         \textit{\small\textit\date{\today} à \DTMcurrenttime{}}
@@ -68,7 +69,7 @@
 \pagestyle{customFooterStyle}
 
 \titleformat{\section}{
-    % avoid page braking right after the section title
+    % avoid page breaking right after the section title
     \needspace{4\baselineskip}
     % make the font size of the section title large and color it with the primary color
     \Large\color{primaryColor}
